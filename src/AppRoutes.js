@@ -7,7 +7,7 @@ import Login from './views/Login';
 import Logout from './views/Logout';
 import Soporte from './views/Soporte';
 import Mantenimiento from './views/Mantenimiento';
-
+import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
 
@@ -25,6 +25,10 @@ const AppRoutes = (props) => {
         exact
         path="/logout"
         render={(route) => <Logout {...props} {...route} />}
+      />
+      <Route
+        path="/usuario"
+        render={(route) => <ListaUsuario {...props} {...route} />}
       />
       {/* <Route
         exact
