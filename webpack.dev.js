@@ -29,7 +29,7 @@ module.exports = merge(common, {
     historyApiFallback: true,
     host: 'localhost',
     port: 8085,
-    https: true,
+    https: false,
     disableHostCheck: true,
     // key: fs.readFileSync('localhost-key.pem'), // LUIS: Hablar con Victor.
     // cert: fs.readFileSync('localhost.pem'), // LUIS: Hablar con Victor.
