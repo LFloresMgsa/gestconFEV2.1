@@ -8,8 +8,11 @@ import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, css } from '@mui/system';
 import { makeStyles } from '@mui/styles';
+
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 const ListarUsuario = (props) => {
 
 
@@ -17,11 +20,39 @@ const ListarUsuario = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [visiblePasswords, setVisiblePasswords] = useState({});
 
   // Cargar al inicio de la página
   useEffect(() => {
     listar();
   }, []);
+
+  const togglePasswordVisibility = (index) => {
+    setVisiblePasswords((prevVisiblePasswords) => ({
+      ...prevVisiblePasswords,
+      [index]: !prevVisiblePasswords[index],
+    }));
+  };
+
+  const renderPasswordCell = (password, index) => {
+    return (
+      <TableCell align="center" style={{ textAlign: 'center' }}>
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          {visiblePasswords[index] ? (
+            password
+          ) : (
+            password.replace(/./g, '*')
+          )}
+          <Button
+            style={{ color: 'gray', marginLeft: '15px', border: '1px solid darkred' }}  // Ajusta el margen y el color del borde según tus preferencias
+            onClick={() => togglePasswordVisibility(index)}
+          >
+            {visiblePasswords[index] ? <VisibilityIcon /> : <VisibilityOffIcon />}
+          </Button>
+        </span>
+      </TableCell>
+    );
+  };
 
   // Procedimiento para CONSULTAR un catálogo con SP MySQL
   const listar = async () => {
@@ -100,17 +131,18 @@ const ListarUsuario = (props) => {
   );
 
 
+
   return (
     <div style={{ marginTop: '35px' }}>
       <Paper
-        sx={{
-          p: 2,
-          margin: 1,
-          maxWidth: 'auto',
-          flexGrow: 1,
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        }}
+       sx={{
+        p: 2,
+        margin: 1,
+        maxWidth: 'auto',
+        flexGrow: 1,
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+      }}
       >
         <Box>
           <Typography
@@ -144,29 +176,29 @@ const ListarUsuario = (props) => {
             <Table aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="left"
-                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  <TableCell align="center"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Usuario</TableCell>
-                  <TableCell align="left"
-                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  <TableCell align="center"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Nombre</TableCell>
-                  <TableCell align="left"
-                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  <TableCell align="center"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Contraseña</TableCell>
                   <TableCell align="center"
-                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Observaciones</TableCell>
                   <TableCell align="center"
-                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Perfil</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {currentData.map((item) => (
+                {currentData.map((item, index) => (
                   <TableRow key={item.Sgm_cUsuario}>
-                    <TableCell align="left">{item.Sgm_cUsuario}</TableCell>
-                    <TableCell align="left">{item.Sgm_cNombre}</TableCell>
-                    <TableCell align="left">{item.Sgm_cContrasena}</TableCell>
+                    <TableCell align="center">{item.Sgm_cUsuario}</TableCell>
+                    <TableCell align="center">{item.Sgm_cNombre}</TableCell>
+                    <TableCell align="center">{renderPasswordCell(item.Sgm_cContrasena, index)}</TableCell>
                     <TableCell align="center">{item.Sgm_cObservaciones}</TableCell>
                     <TableCell align="center">{item.Sgm_cPerfil}</TableCell>
                   </TableRow>
@@ -222,6 +254,7 @@ const ListarUsuario = (props) => {
         </div>
       </FooterRoot>
       <AppFooter />
+      <Divider />
     </div>
   );
 };
