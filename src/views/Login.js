@@ -96,7 +96,7 @@ const Login = () => {
 			let _result;
 
 			// Si encontró el token ingresa al login
-			await eventoService.obtenerUsuario(_body).then(
+			await eventoService.obtenerUsuariov2(_body).then(
 				(res) => {
 					setLogeo(res[0]);
 					_result = res[0];

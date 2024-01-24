@@ -197,6 +197,7 @@ const LoadFiles = (props) => {
   const filteredDocumentos = documentos.filter((documento) =>
     documento.fileName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDocumentos = filteredDocumentos.slice(indexOfFirstItem, indexOfLastItem);
