@@ -51,7 +51,7 @@ const AppTopBar = (props) => {
 
         <div className="toolbar-left">
         <Typography variant="h6" color="white" component="div">
-            Sistema de Gestión de Contenido - GESCONT v 1.0
+            Sistema de Gestión de Contenido - GESCONT v 2.0
           </Typography>
         </div>
 
