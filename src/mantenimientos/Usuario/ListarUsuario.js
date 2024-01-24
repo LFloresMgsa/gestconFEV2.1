@@ -8,13 +8,20 @@ import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, css } from '@mui/system';
 import { makeStyles } from '@mui/styles';
-
+import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 const ListarUsuario = (props) => {
 
+  const fondoStyle = {
+    backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`, // Opacidad agregada con rgba
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    height: '100vh',
+    // Otras propiedades de estilo según tus necesidades
+  };
 
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -133,7 +140,7 @@ const ListarUsuario = (props) => {
 
 
   return (
-    <div style={{ marginTop: '35px' }}>
+    <div style={{ ...fondoStyle, marginTop: '35px' }}>
       <Paper
        sx={{
         p: 2,
@@ -144,6 +151,7 @@ const ListarUsuario = (props) => {
           theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
       }}
       >
+
         <Box>
           <Typography
             variant="h5"
