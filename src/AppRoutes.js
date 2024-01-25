@@ -9,6 +9,7 @@ import Soporte from './views/Soporte';
 import Mantenimiento from './views/Mantenimiento';
 import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
 import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
+import CrearUsuario from './mantenimientos/Usuario/CrearUsuario';
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
 
@@ -32,10 +33,16 @@ const AppRoutes = (props) => {
         render={(route) => <ListaUsuario {...props} {...route} />}
       />
 
-<Route
+      <Route
         path="/editar"
         render={(route) => <EditaUsuario {...props} {...route} />}
       />
+
+      <Route
+        path="/crear"
+        render={(route) => <CrearUsuario {...props} {...route} />}
+      />
+
 
       {/* <Route
         exact

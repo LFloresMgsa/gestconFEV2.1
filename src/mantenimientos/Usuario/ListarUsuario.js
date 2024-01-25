@@ -10,7 +10,7 @@ import { styled, css } from '@mui/system';
 import IconButton from '@mui/material/IconButton';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
@@ -118,6 +118,13 @@ const ListarUsuario = (props) => {
     `
   );
 
+  // procedimiento para CREAR un catalogo con SP MySQL
+  const crear = () => {
+    history.push({
+      pathname: '/crear',
+      state: { }
+    });
+  }
 
   const editar = (Sgm_cUsuario, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
 
@@ -129,15 +136,17 @@ const ListarUsuario = (props) => {
     });
   };
 
-   // procedimiento para ELIMINAR un catalogo con SP MySQL
-   const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre ,Sgm_cObservaciones, Sgm_cPerfil) => {
+  // procedimiento para ELIMINAR un catalogo con SP MySQL
+  const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
 
     if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
       try {
         let _result;
         //console.log(_result);
-        let _body = ({ Accion: "ELIMINAR" , Sgm_cUsuario: Sgm_cUsuario, Sgm_cContrasena : Sgm_cContrasena, Sgm_cNombre:Sgm_cNombre,
-        Sgm_cObservaciones: Sgm_cObservaciones, Sgm_cPerfil:Sgm_cPerfil  })
+        let _body = ({
+          Accion: "ELIMINAR", Sgm_cUsuario: Sgm_cUsuario, Sgm_cContrasena: Sgm_cContrasena, Sgm_cNombre: Sgm_cNombre,
+          Sgm_cObservaciones: Sgm_cObservaciones, Sgm_cPerfil: Sgm_cPerfil
+        })
         //console.log(_body);
         await eventoService.obtenerUsuariov2(_body).then(
           (res) => {
@@ -157,8 +166,8 @@ const ListarUsuario = (props) => {
 
       } catch (error) {
         alert(error);
-      } 
-    } 
+      }
+    }
   };
 
   return (
@@ -227,6 +236,13 @@ const ListarUsuario = (props) => {
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   ></TableCell>
+                  <TableCell align="left" sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}>
+                    <IconButton>
+                      <AddCircleOutlineOutlinedIcon style={{color:'white', fontSize:'32px'}} 
+                      onClick={crear}
+                      />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -239,14 +255,14 @@ const ListarUsuario = (props) => {
                     <TableCell align="left">{item.Sgm_cPerfil}</TableCell>
                     <TableCell align="center">
                       <IconButton size="medium" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>
-                        <EditNoteOutlinedIcon />
+                        <EditNoteOutlinedIcon tyle={{fontSize:'30px'}} />
                       </IconButton>
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton size="medium" style={{ color: 'orange'}}
-                      onClick={() => eliminar(item.Sgm_cUsuario, item.Sgm_cContrasena ,item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}
+                      <IconButton size="medium" style={{ color: 'orange' }}
+                        onClick={() => eliminar(item.Sgm_cUsuario, item.Sgm_cContrasena, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}
                       >
-                        <DeleteForeverOutlinedIcon />
+                        <DeleteForeverOutlinedIcon style={{fontSize:'30px'}}/>
                       </IconButton>
                     </TableCell>
 
