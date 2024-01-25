@@ -75,7 +75,7 @@ const CrearUsuario = () => {
             );
         } finally {
             history.push({
-                pathname: '/usuario'
+                pathname: '/MantUsuario'
             });
             setLoading(false);
         }
@@ -133,7 +133,7 @@ const CrearUsuario = () => {
 
     const cancelar = async (e) => {
         history.push({
-            pathname: '/usuario'
+            pathname: '/MantUsuario'
         });
         setLoading(false);
     }

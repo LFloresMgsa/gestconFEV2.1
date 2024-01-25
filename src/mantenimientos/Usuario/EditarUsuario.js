@@ -169,7 +169,7 @@ const EditaUsuario = (props) => {
         alert(error);
     } finally {
         history.push({
-            pathname: '/usuario'
+            pathname: '/MantUsuario'
         });
         setLoading(false);
     }
@@ -177,7 +177,7 @@ const EditaUsuario = (props) => {
 
     const cancelar = async (e) => {
         history.push({
-            pathname: '/usuario'
+            pathname: '/MantUsuario'
         });
         setLoading(false);
     }
