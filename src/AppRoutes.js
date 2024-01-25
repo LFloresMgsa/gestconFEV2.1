@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState , useEffect} from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Dashboard from './views/Dashboard';
@@ -9,9 +9,28 @@ import Soporte from './views/Soporte';
 import Mantenimiento from './views/Mantenimiento';
 import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
 import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
-import CrearUsuario from './mantenimientos/Usuario/CrearUsuario';
+import MantUsuario from './views/MantUsuario';
+import CrearUsuario from './views/CrearUsuario';
+
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+
+
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
+
+  const [validaLogeo, setValidaLogeo] = useState('')
+
+
+  useEffect(() => {
+    
+    setValidaLogeo(cookies.get('Sgm_cUsuario'));
+    console.log(validaLogeo);
+
+
+  }, []);
+
+
 
   return (
     <Switch>
@@ -29,8 +48,8 @@ const AppRoutes = (props) => {
         render={(route) => <Logout {...props} {...route} />}
       />
       <Route
-        path="/usuario"
-        render={(route) => <ListaUsuario {...props} {...route} />}
+        path="/MantUsuario"
+        render={(route) => <MantUsuario {...props} {...route} />}
       />
 
       <Route

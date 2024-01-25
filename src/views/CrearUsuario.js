@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, Component } from 'react';
-import ListarUsuario from '../mantenimientos/Usuario/ListarUsuario';
+import CrearUsuario from '../mantenimientos/Usuario/CrearUsuario';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
@@ -14,12 +14,7 @@ class MantUsuario extends Component {
     render() {
         return (
             <div >
-
-                <div>
-                    <h3>Mantenimiento - Usuarios</h3>
-                </div>
-
-                <ListarUsuario />
+                <CrearUsuario />
             </div>
         );
     }
