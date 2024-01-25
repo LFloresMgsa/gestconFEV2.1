@@ -8,6 +8,7 @@ import Logout from './views/Logout';
 import Soporte from './views/Soporte';
 import Mantenimiento from './views/Mantenimiento';
 import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
+import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
 
@@ -30,6 +31,12 @@ const AppRoutes = (props) => {
         path="/usuario"
         render={(route) => <ListaUsuario {...props} {...route} />}
       />
+
+<Route
+        path="/editar"
+        render={(route) => <EditaUsuario {...props} {...route} />}
+      />
+
       {/* <Route
         exact
         path="/soporte"

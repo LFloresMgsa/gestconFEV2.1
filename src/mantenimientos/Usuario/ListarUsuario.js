@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { useHistory } from 'react-router-dom';
 import { eventoService } from '../../services/evento.service';
 import md5 from 'md5'; // Importa la función md5 si aún no lo has hecho
 import { storage } from "../../views/storage.js";
@@ -7,12 +7,11 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, css } from '@mui/system';
-import { makeStyles } from '@mui/styles';
+
 import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+
 const ListarUsuario = (props) => {
 
   const fondoStyle = {
@@ -22,57 +21,36 @@ const ListarUsuario = (props) => {
     height: '100vh',
     // Otras propiedades de estilo según tus necesidades
   };
-
+  const history = useHistory();
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [visiblePasswords, setVisiblePasswords] = useState({});
+
 
   // Cargar al inicio de la página
   useEffect(() => {
     listar();
   }, []);
 
-  const togglePasswordVisibility = (index) => {
-    setVisiblePasswords((prevVisiblePasswords) => ({
-      ...prevVisiblePasswords,
-      [index]: !prevVisiblePasswords[index],
-    }));
-  };
 
-  const renderPasswordCell = (password, index) => {
-    return (
-      <TableCell align="center" style={{ textAlign: 'center' }}>
-        <span style={{ display: 'flex', alignItems: 'center' }}>
-          {visiblePasswords[index] ? (
-            password
-          ) : (
-            password.replace(/./g, '*')
-          )}
-          <Button
-            style={{ color: 'gray', marginLeft: '15px', border: '1px solid darkred' }}  // Ajusta el margen y el color del borde según tus preferencias
-            onClick={() => togglePasswordVisibility(index)}
-          >
-            {visiblePasswords[index] ? <VisibilityIcon /> : <VisibilityOffIcon />}
-          </Button>
-        </span>
-      </TableCell>
-    );
-  };
 
-  // Procedimiento para CONSULTAR un catálogo con SP MySQL
   const listar = async () => {
-    let _body = { Accion: "BUSCARTODOS" }
-    return await eventoService.obtenerUsuariov2(_body).then(
-      (res) => {
-        setData(res[0]);
-      },
-      (error) => {
-        console.log(error);
+    let _body = { Accion: "BUSCARTODOS" };
+    try {
+      const res = await eventoService.obtenerUsuariov2(_body);
+      
+      //console.log("Respuesta de la API:", res);
 
+      if (res && res[0]) {
+      //  console.log(res[0]);
+        setData(res[0]);
+      } else {
+        console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
       }
-    );
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+    }
   };
 
 
@@ -80,9 +58,9 @@ const ListarUsuario = (props) => {
     setCurrentPage(newPage);
   };
 
-  const filteredData = data.filter((item) =>
-    item.Sgm_cNombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = (data || []).filter((item) =>
+  item?.Sgm_cNombre?.toLowerCase().includes(searchTerm.toLowerCase())
+);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -138,18 +116,27 @@ const ListarUsuario = (props) => {
   );
 
 
+  const editar = (Sgm_cUsuario, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
+
+    const usuario = { Sgm_cObservaciones, Sgm_cPerfil, Sgm_cUsuario, Sgm_cNombre };
+
+    history.push({
+      pathname: `/editar`,
+      state: { usuario }
+    });
+  };
 
   return (
     <div style={{ ...fondoStyle, marginTop: '35px' }}>
       <Paper
-       sx={{
-        p: 2,
-        margin: 1,
-        maxWidth: 'auto',
-        flexGrow: 1,
-        backgroundColor: (theme) =>
-          theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-      }}
+        sx={{
+          p: 2,
+          margin: 1,
+          maxWidth: 'auto',
+          flexGrow: 1,
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        }}
       >
 
         <Box>
@@ -184,31 +171,35 @@ const ListarUsuario = (props) => {
             <Table aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center"
+                  <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Usuario</TableCell>
-                  <TableCell align="center"
+                  <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Nombre</TableCell>
-                  <TableCell align="center"
+                  {/* <TableCell align="center"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
-                  >Contraseña</TableCell>
-                  <TableCell align="center"
+                  >Contraseña</TableCell> */}
+                  <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Observaciones</TableCell>
-                  <TableCell align="center"
+                  <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Perfil</TableCell>
+                  <TableCell align="left"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  ></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {currentData.map((item, index) => (
                   <TableRow key={item.Sgm_cUsuario}>
-                    <TableCell align="center">{item.Sgm_cUsuario}</TableCell>
-                    <TableCell align="center">{item.Sgm_cNombre}</TableCell>
-                    <TableCell align="center">{renderPasswordCell(item.Sgm_cContrasena, index)}</TableCell>
-                    <TableCell align="center">{item.Sgm_cObservaciones}</TableCell>
-                    <TableCell align="center">{item.Sgm_cPerfil}</TableCell>
+                    <TableCell align="left">{item.Sgm_cUsuario}</TableCell>
+                    <TableCell align="left">{item.Sgm_cNombre}</TableCell>
+                     {/* <TableCell align="center">{item.Sgm_cContrasena}</TableCell>  */}
+                    <TableCell align="left">{item.Sgm_cObservaciones}</TableCell>
+                    <TableCell align="left">{item.Sgm_cPerfil}</TableCell>
+                    <TableCell align="left"><Button variant="contained" size="small" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>Editar</Button></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
