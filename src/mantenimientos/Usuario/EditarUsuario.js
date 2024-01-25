@@ -203,7 +203,7 @@ const EditaUsuario = (props) => {
 
                     <Grid container spacing={2}>
 
-                        <Grid item xs={8}>
+                        <Grid item xs={4}>
 
                             <TextField
                                 label="Usuario"
@@ -253,7 +253,7 @@ const EditaUsuario = (props) => {
 
                     </Grid>
 
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} style={{marginTop:'2px'}}>
                         <Grid item xs={8}>
                             <table>
                                 <tbody>
