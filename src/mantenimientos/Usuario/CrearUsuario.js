@@ -13,7 +13,7 @@ import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
 import Swal from 'sweetalert2';
 import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';  // Import FormControl
-const CreaCatalogo = () => {
+const CrearUsuario = () => {
 
     const fondoStyle = {
         backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`, // Opacidad agregada con rgba
@@ -245,4 +245,4 @@ const CreaCatalogo = () => {
 }
 
 
-export default CreaCatalogo
+export default CrearUsuario

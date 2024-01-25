@@ -6,6 +6,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 import Login from '../../../views/Login';
 
+import Crear from '../../../mantenimientos/Usuario/CrearUsuario';
+
 import {
   Button,
   Menu,
