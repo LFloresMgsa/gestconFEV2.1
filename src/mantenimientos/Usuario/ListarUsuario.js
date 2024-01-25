@@ -7,6 +7,9 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, css } from '@mui/system';
+import IconButton from '@mui/material/IconButton';
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -39,11 +42,11 @@ const ListarUsuario = (props) => {
     let _body = { Accion: "BUSCARTODOS" };
     try {
       const res = await eventoService.obtenerUsuariov2(_body);
-      
+
       //console.log("Respuesta de la API:", res);
 
       if (res && res[0]) {
-      //  console.log(res[0]);
+        //  console.log(res[0]);
         setData(res[0]);
       } else {
         console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
@@ -59,8 +62,8 @@ const ListarUsuario = (props) => {
   };
 
   const filteredData = (data || []).filter((item) =>
-  item?.Sgm_cNombre?.toLowerCase().includes(searchTerm.toLowerCase())
-);
+    item?.Sgm_cNombre?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -126,6 +129,38 @@ const ListarUsuario = (props) => {
     });
   };
 
+   // procedimiento para ELIMINAR un catalogo con SP MySQL
+   const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre ,Sgm_cObservaciones, Sgm_cPerfil) => {
+
+    if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
+      try {
+        let _result;
+        //console.log(_result);
+        let _body = ({ Accion: "ELIMINAR" , Sgm_cUsuario: Sgm_cUsuario, Sgm_cContrasena : Sgm_cContrasena, Sgm_cNombre:Sgm_cNombre,
+        Sgm_cObservaciones: Sgm_cObservaciones, Sgm_cPerfil:Sgm_cPerfil  })
+        //console.log(_body);
+        await eventoService.obtenerUsuariov2(_body).then(
+          (res) => {
+            _result = res;
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+
+        if (_result.error) {
+          throw _result.error;
+        }
+
+        alert('El usuario fue eliminado');
+        listar();
+
+      } catch (error) {
+        alert(error);
+      } 
+    } 
+  };
+
   return (
     <div style={{ ...fondoStyle, marginTop: '35px' }}>
       <Paper
@@ -189,6 +224,9 @@ const ListarUsuario = (props) => {
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   ></TableCell>
+                  <TableCell align="left"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  ></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -196,10 +234,23 @@ const ListarUsuario = (props) => {
                   <TableRow key={item.Sgm_cUsuario}>
                     <TableCell align="left">{item.Sgm_cUsuario}</TableCell>
                     <TableCell align="left">{item.Sgm_cNombre}</TableCell>
-                     {/* <TableCell align="center">{item.Sgm_cContrasena}</TableCell>  */}
+                    {/* <TableCell align="center">{item.Sgm_cContrasena}</TableCell>  */}
                     <TableCell align="left">{item.Sgm_cObservaciones}</TableCell>
                     <TableCell align="left">{item.Sgm_cPerfil}</TableCell>
-                    <TableCell align="left"><Button variant="contained" size="small" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>Editar</Button></TableCell>
+                    <TableCell align="center">
+                      <IconButton size="medium" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>
+                        <EditNoteOutlinedIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton size="medium" style={{ color: 'orange'}}
+                      onClick={() => eliminar(item.Sgm_cUsuario, item.Sgm_cContrasena ,item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}
+                      >
+                        <DeleteForeverOutlinedIcon />
+                      </IconButton>
+                    </TableCell>
+
+                    {/* <TableCell align="left"><Button variant="contained" size="small" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>Editar</Button></TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
