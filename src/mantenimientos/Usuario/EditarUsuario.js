@@ -12,8 +12,7 @@ import AppFooter from '../../components/layout/AppFooter.js';
 import { Divider } from '@mui/material';
 import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
-import Snackbar from '@mui/material/Snackbar';
-import SnackbarContent from '@mui/material/SnackbarContent';
+import Swal from 'sweetalert2';
 const EditaUsuario = (props) => {
 
     const fondoStyle = {
@@ -131,7 +130,11 @@ const EditaUsuario = (props) => {
     try {
         // Validate that none of the required fields are empty
         if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil) {
-            alert('No se actualizo , falta llenar los campos');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se actualizó , falta llenar los campos'
+            });
             return;
         }
 
@@ -147,14 +150,20 @@ const EditaUsuario = (props) => {
         await eventoService.obtenerUsuariov2(_body).then(
             (res) => {
                 setData(res[0]);
+                Swal.fire({
+                        
+                    icon: 'success',
+                    title: 'Usuario',
+                    text: 'Actualizado',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             },
             (error) => {
                 console.log(error);
                 setError(error);
             }
         );
-
-        alert('El usuario fue actualizado');
     } catch (error) {
         alert(error);
     } finally {

@@ -11,6 +11,7 @@ import AppFooter from '../../components/layout/AppFooter.js';
 import { eventoService } from '../../services/evento.service';
 import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
+import Swal from 'sweetalert2';
 
 const CreaCatalogo = () => {
 
@@ -26,36 +27,60 @@ const CreaCatalogo = () => {
     const [loading, setLoading] = useState([]);
     const [data, setData] = useState([]);
 
-    
+
     const [Sgm_cUsuario, setUsuario] = useState('')
     const [Sgm_cNombre, setNombre] = useState('')
     const [Sgm_cContrasena, setContrasena] = useState('')
     const [Sgm_cObservaciones, setObservaciones] = useState('')
     const [Sgm_cPerfil, setPerfil] = useState('')
 
-    // procedimiento para INSERTAR un catalogo con SP MySQL
-    const insertarUsuario = async (e) =>  {
+    const insertarUsuario = async (e) => {
         try {
-            let _body = { Accion: "INSERTAR", Sgm_cUsuario: Sgm_cUsuario, Sgm_cNombre: Sgm_cNombre, 
-            Sgm_cContrasena: Sgm_cContrasena, Sgm_cObservaciones: Sgm_cObservaciones
-            , Sgm_cPerfil: Sgm_cPerfil }
-            //console.log(_body);
+            // Verificar que todos los campos estén llenos
+            if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil) {
+                // Mostrar un mensaje de error o realizar alguna acción
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se logró crear el usuario. Por favor, completa todos los campos.'
+                });
+                return;
+            }
+
+            let _body = {
+                Accion: "INSERTAR",
+                Sgm_cUsuario: Sgm_cUsuario,
+                Sgm_cNombre: Sgm_cNombre,
+                Sgm_cContrasena: Sgm_cContrasena,
+                Sgm_cObservaciones: Sgm_cObservaciones,
+                Sgm_cPerfil: Sgm_cPerfil
+            };
+
             await eventoService.obtenerUsuariov2(_body).then(
-              (res) => {
-                setData(res[0]);
-              },
-              (error) => {
-                console.log(error)
-                setError(error);
-              }
-            )
+                (res) => {
+                    setData(res[0]);
+                    Swal.fire({
+                        
+                        icon: 'success',
+                        title: 'Usuario',
+                        text: 'Registrado',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                    setError(error);
+                }
+            );
         } finally {
             history.push({
                 pathname: '/usuario'
             });
             setLoading(false);
         }
-    }
+    };
+
 
     const FooterRoot = styled('footer')(
         ({ theme }) => css`

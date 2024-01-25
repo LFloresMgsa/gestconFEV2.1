@@ -14,7 +14,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-
+import Swal from 'sweetalert2';
 const ListarUsuario = (props) => {
 
   const fondoStyle = {
@@ -136,37 +136,48 @@ const ListarUsuario = (props) => {
     });
   };
 
-  // procedimiento para ELIMINAR un catalogo con SP MySQL
   const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
-
-    if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-      try {
-        let _result;
-        //console.log(_result);
-        let _body = ({
-          Accion: "ELIMINAR", Sgm_cUsuario: Sgm_cUsuario, Sgm_cContrasena: Sgm_cContrasena, Sgm_cNombre: Sgm_cNombre,
-          Sgm_cObservaciones: Sgm_cObservaciones, Sgm_cPerfil: Sgm_cPerfil
-        })
-        //console.log(_body);
-        await eventoService.obtenerUsuariov2(_body).then(
-          (res) => {
-            _result = res;
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-
-        if (_result.error) {
-          throw _result.error;
+    try {
+      const result = await Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esto",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminarlo"
+      });
+  
+      if (result.isConfirmed) {
+        const _body = {
+          Accion: "ELIMINAR",
+          Sgm_cUsuario,
+          Sgm_cContrasena,
+          Sgm_cNombre,
+          Sgm_cObservaciones,
+          Sgm_cPerfil
+        };
+  
+        const res = await eventoService.obtenerUsuariov2(_body);
+  
+        if (res.error) {
+          throw res.error;
         }
-
-        alert('El usuario fue eliminado');
+  
+        Swal.fire({
+          title: "¡Eliminado!",
+          text: "El usuario ha sido eliminado.",
+          icon: "success"
+        });
+  
         listar();
-
-      } catch (error) {
-        alert(error);
       }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error"
+      });
     }
   };
 
