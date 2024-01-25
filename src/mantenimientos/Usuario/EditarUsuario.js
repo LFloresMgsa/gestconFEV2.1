@@ -164,6 +164,7 @@ const EditaUsuario = (props) => {
                 setError(error);
             }
         );
+
     } catch (error) {
         alert(error);
     } finally {

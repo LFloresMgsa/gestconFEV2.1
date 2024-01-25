@@ -12,7 +12,7 @@ import { eventoService } from '../../services/evento.service';
 import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
 import Swal from 'sweetalert2';
-
+import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';  // Import FormControl
 const CreaCatalogo = () => {
 
     const fondoStyle = {
@@ -60,7 +60,7 @@ const CreaCatalogo = () => {
                 (res) => {
                     setData(res[0]);
                     Swal.fire({
-                        
+
                         icon: 'success',
                         title: 'Usuario',
                         text: 'Registrado',
@@ -194,15 +194,19 @@ const CreaCatalogo = () => {
                                 variant="standard"
 
                             />
-                            <TextField
-                                label="Perfil"
-                                value={Sgm_cPerfil}
-                                onChange={(e) => setPerfil(e.target.value)}
-                                name="textformat"
-                                id="perfil"
-                                variant="standard"
-
-                            />
+                            <FormControl fullWidth variant="standard">
+                                <InputLabel id="perfil-label">Perfil</InputLabel>
+                                <Select
+                                    labelId="perfil-label"
+                                    id="perfil"
+                                    value={Sgm_cPerfil}
+                                    onChange={(e) => setPerfil(e.target.value)}
+                                    name="textformat"
+                                >
+                                    <MenuItem value="Root">Root</MenuItem>
+                                    <MenuItem value="Admin">Admin</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                     </Grid>
