@@ -17,6 +17,7 @@ import TableRow from '@mui/material/TableRow';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@mui/material/Button';
+import Swal from 'sweetalert2';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import fon from '../imagenes/buscar.png'
 import {
@@ -206,7 +207,12 @@ const LoadFiles = (props) => {
 
     try {
       if (!selectedFile) {
-        console.error('No se ha seleccionado ningún archivo.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se ha seleccionado ningún archivo.'
+      });
+        //console.error('No se ha seleccionado ningún archivo.');
         return;
       }
 
@@ -214,7 +220,7 @@ const LoadFiles = (props) => {
 
       
       if (response) {
-        console.log('Respuesta del servidor:', response);
+        //console.log('Respuesta del servidor:', response);
 
         if (response.success) {
           console.log('Archivo cargado con éxito:', response.message);
@@ -229,10 +235,10 @@ const LoadFiles = (props) => {
       }
     } catch (error) {
       
-      console.error('Error selectedFile:',selectedFile);
-      console.error('Error selectedFileName:',selectedFile.name);
-      console.error('Error urlActual:',urlActual);
-      console.error('Error en la carga del archivo-:', error.message);
+      // console.error('Error selectedFile:',selectedFile);
+      // console.error('Error selectedFileName:',selectedFile.name);
+      // console.error('Error urlActual:',urlActual);
+      // console.error('Error en la carga del archivo-:', error.message);
 
       // Muestra el mensaje de error al usuario
       alert(error.message || 'Error desconocido');

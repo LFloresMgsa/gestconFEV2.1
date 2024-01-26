@@ -1,8 +1,8 @@
 //evento.service.js
 import { authHeader, handleResponse } from '../helpers';
 import Fetch from '../helpers/Fetch';
-import axios from 'axios';
 
+import Swal from 'sweetalert2';
 export const eventoService = {
   obtenerUsuario,
   obtenerUsuariov2,
@@ -19,7 +19,7 @@ function obtenerToken(dataJson) {
   const url = `/api/gescon/auth`;
   return Fetch.post(url, params, options).then((res) =>
 
-  
+
     handleResponse(res, false)
   );
 }
@@ -31,25 +31,35 @@ async function cargarArchivo(file, urlActual, filename) {
     formData.append('urlDestino', urlActual);
     formData.append('filename', filename);
 
-    console.log('FormData:', Object.fromEntries(formData.entries()));
-
     const url = '/api/gescon/cargararchivo';
-    console.log('URL de carga de archivo:', url);
 
     const response = await Fetch.postFile(url, formData);
 
     if (!response.ok) {
-      console.error('Error en la respuesta:', response.status, response.statusText);
       const text = await response.text();
-      console.error('Cuerpo de la respuesta:', text);
-      throw new Error('Error en la respuesta del servidor');
+
+      // Muestra el mensaje de error al usuario utilizando SweetAlert2
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar el archivo',
+        text: 'El archivo es demasiado pesado'
+      });
+
+      // Retorna desde la función sin lanzar el error de nuevo
+      return;
     }
 
     return handleResponse(response, false);
 
   } catch (error) {
     console.error('Error en la función cargarArchivo:', error);
-    throw error;
+
+    // Muestra el mensaje de error al usuario utilizando SweetAlert2
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al cargar el archivo',
+      text: error.message || 'Error desconocido'
+    });
   }
 }
 
@@ -75,7 +85,7 @@ async function cargarArchivo(file, urlActual, filename) {
 function obtenerDirectorios() {
 
 
-  const options = { headers: authHeader()};
+  const options = { headers: authHeader() };
   const params = {};
 
 
@@ -90,7 +100,7 @@ function obtenerUsuario(dataJson) {
   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
   const params = {};
 
-//console.log(dataJson);
+  //console.log(dataJson);
 
   const url = `/api/gescon/sgm_usuarios/auth`;
   return Fetch.post(url, params, options).then((res) =>
@@ -102,7 +112,7 @@ function obtenerUsuariov2(dataJson) {
   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
   const params = {};
 
-//console.log(dataJson);
+  //console.log(dataJson);
 
   const url = `/api/gescon/sgm_usuarios`;
   return Fetch.post(url, params, options).then((res) =>
