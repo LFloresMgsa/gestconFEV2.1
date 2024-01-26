@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { eventoService } from '../services/evento.service';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +19,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@mui/material/Button';
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useDropzone } from 'react-dropzone';
 import fon from '../imagenes/buscar.png'
 import {
   IconForXlsx,
@@ -102,10 +103,28 @@ const LoadFiles = (props) => {
 
   const [urlActual, setUrlActual] = useState('');
   const [titulo, setTitulo] = useState('');
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const itemsPerPage = 10;
+
+
+  const onDrop = useCallback((acceptedFiles) => {
+    // Actualiza el estado con el archivo seleccionado
+    setSelectedFile(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({ onDrop });
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Función para cerrar la ventana emergente
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   useEffect(() => {
 
@@ -201,6 +220,7 @@ const LoadFiles = (props) => {
 
 
 
+
   const handleFileUpload = async () => {
 
 
@@ -211,14 +231,14 @@ const LoadFiles = (props) => {
           icon: 'error',
           title: 'Error',
           text: 'No se ha seleccionado ningún archivo.'
-      });
+        });
         //console.error('No se ha seleccionado ningún archivo.');
         return;
       }
 
-       const response = await eventoService.cargarArchivo(selectedFile, urlActual, selectedFile.name);
+      const response = await eventoService.cargarArchivo(selectedFile, urlActual, selectedFile.name);
 
-      
+
       if (response) {
         //console.log('Respuesta del servidor:', response);
 
@@ -234,7 +254,7 @@ const LoadFiles = (props) => {
         console.error('Respuesta del servidor no válida:', response);
       }
     } catch (error) {
-      
+
       // console.error('Error selectedFile:',selectedFile);
       // console.error('Error selectedFileName:',selectedFile.name);
       // console.error('Error urlActual:',urlActual);
@@ -299,6 +319,16 @@ const LoadFiles = (props) => {
     }
   };
 
+  const dropzoneStyle = {
+    border: '2px dashed #cccccc',
+    borderRadius: '4px',
+    padding: '20px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    marginTop: '20px',
+  };
+
+
   return (
     <div style={{ marginTop: '35px' }}>
       <Paper
@@ -311,11 +341,81 @@ const LoadFiles = (props) => {
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
-        {/* Agrega el controlador de cambio a tu entrada de archivo */}
-        <input type="file" onChange={handleFileChange} />
+        <Button
+          variant="contained"
 
-        {/* Agrega un botón para iniciar la carga del archivo */}
-        <button onClick={handleFileUpload}>Subir Archivo</button>
+          onClick={openModal}
+          style={{ marginLeft: 'auto', backgroundColor: 'darkred' }}
+        >
+          Subir Archivo
+        </Button>
+        {isModalOpen && (
+          <div style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+
+            <div style={{
+              backgroundColor: '#eeeeee',
+              margin: '15% auto',
+              padding: '50px',
+              border: '1px solid #888',
+              width: '60%',
+              position: 'relative',  // Agregado para que el position absolute funcione dentro de este contenedor
+            }}>
+              {/* Icono "X" en la esquina superior derecha */}
+              <div style={{
+                color: 'darkred',
+                fontSize: '35px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                position: 'absolute',
+                top: '10px',
+                right: '30px',
+              }} onClick={closeModal}>
+                &times;
+              </div>
+              {/* Contenido de la ventana emergente */}
+              <div {...getRootProps()} style={dropzoneStyle}>
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Suelta los archivos aquí...</p>
+                ) : (
+                  <p>
+                    {acceptedFiles.length > 0
+                      ? `Archivo seleccionado: ${acceptedFiles[0].name}`
+                      : 'Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos'}
+                  </p>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: '440px', backgroundColor: 'darkred' }}
+                  onClick={closeModal}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: '10px', backgroundColor: 'darkred' }}
+                  onClick={handleFileUpload}
+                >
+                  Empezar a Cargar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
         <Typography
           variant="h5"
           color="black"
