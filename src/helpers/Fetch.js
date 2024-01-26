@@ -2,7 +2,7 @@
 import { store } from '../store.js';
 
 //const apiHost = 'http://localhost:5000';
- const apiHost = `${SERVICE_URL}`;
+const apiHost = `${SERVICE_URL}`;
 
 
 
@@ -14,15 +14,18 @@ async function request(url, params = {}, method = 'POST', options) {
   let _portalID = params.portalID || currentPortalID;
   let _tabID = params.tabID || activeTabID;
 
-  //url +=  '?' + objectToQueryString({...params});
 
-  // console.log('-----------');
-  // console.log(`${SERVICE_URL}`);
-  // console.log(apiHost );
-  // console.log(url);
-  // console.log(_options);
-   
-  //  console.log('-----------');
+  return await fetch(apiHost + url, _options);
+}
+
+async function requestFile(url, formData, options) {
+  const { currentPortalID = 0, activeTabID = 0 } = store.getState();
+  const _options = {
+    method: 'POST',
+    credentials: 'same-origin',
+    ...options,
+    body: formData,
+  };
 
   return await fetch(apiHost + url, _options);
 }
@@ -86,6 +89,10 @@ function post(url, params, options) {
   return request(url, params, 'POST', options);
 }
 
+function postFile(url, formData, options) {
+  return requestFile(url, formData, options);
+}
+
 function update(url, params, options) {
   return request(url, params, 'PUT', options);
 }
@@ -99,4 +106,5 @@ export default {
   post,
   update,
   remove,
+  postFile,
 };

@@ -17,6 +17,7 @@ import TableRow from '@mui/material/TableRow';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@mui/material/Button';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import fon from '../imagenes/buscar.png'
 import {
   IconForXlsx,
@@ -101,6 +102,7 @@ const LoadFiles = (props) => {
   const [urlActual, setUrlActual] = useState('');
   const [titulo, setTitulo] = useState('');
 
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const itemsPerPage = 10;
 
@@ -132,13 +134,13 @@ const LoadFiles = (props) => {
       // Obtener el valor del parámetro 'path' de la URL
       const queryParams = new URLSearchParams(url.split('?')[1]);
       const path = queryParams.get('path');
-    
+
       // Separar el path en partes utilizando el carácter '\'
       const partesPath = path.split('\\');
-    
+
       // Obtener el último valor del array resultante
       const ultimoDirectorio = partesPath.pop();
-    
+
       return ultimoDirectorio;
     }
 
@@ -190,6 +192,55 @@ const LoadFiles = (props) => {
   };
 
 
+
+  const handleFileChange = (event) => {
+    // Aquí actualizamos el estado con el archivo seleccionado
+    setSelectedFile(event.target.files[0]);
+  };
+
+
+
+  const handleFileUpload = async () => {
+
+
+
+    try {
+      if (!selectedFile) {
+        console.error('No se ha seleccionado ningún archivo.');
+        return;
+      }
+
+       const response = await eventoService.cargarArchivo(selectedFile, urlActual, selectedFile.name);
+
+      
+      if (response) {
+        console.log('Respuesta del servidor:', response);
+
+        if (response.success) {
+          console.log('Archivo cargado con éxito:', response.message);
+          // Realiza acciones adicionales después de cargar el archivo si es necesario
+        } else {
+          console.error('Error al cargar el archivo:', response.message || 'Error desconocido');
+          // Muestra el mensaje de error al usuario
+          alert(response.message || 'Error desconocido');
+        }
+      } else {
+        console.error('Respuesta del servidor no válida:', response);
+      }
+    } catch (error) {
+      
+      console.error('Error selectedFile:',selectedFile);
+      console.error('Error selectedFileName:',selectedFile.name);
+      console.error('Error urlActual:',urlActual);
+      console.error('Error en la carga del archivo-:', error.message);
+
+      // Muestra el mensaje de error al usuario
+      alert(error.message || 'Error desconocido');
+    }
+  };
+
+
+
   const handleButtonClick = (item) => {
     handleDocumentClick(item.fileName);
   };
@@ -197,7 +248,7 @@ const LoadFiles = (props) => {
   const filteredDocumentos = documentos.filter((documento) =>
     documento.fileName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDocumentos = filteredDocumentos.slice(indexOfFirstItem, indexOfLastItem);
@@ -243,7 +294,7 @@ const LoadFiles = (props) => {
   };
 
   return (
-    <div style={{marginTop:'35px'}}>
+    <div style={{ marginTop: '35px' }}>
       <Paper
         sx={{
           p: 2,
@@ -254,6 +305,11 @@ const LoadFiles = (props) => {
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
+        {/* Agrega el controlador de cambio a tu entrada de archivo */}
+        <input type="file" onChange={handleFileChange} />
+
+        {/* Agrega un botón para iniciar la carga del archivo */}
+        <button onClick={handleFileUpload}>Subir Archivo</button>
         <Typography
           variant="h5"
           color="black"
