@@ -17,6 +17,7 @@ import TableRow from '@mui/material/TableRow';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@mui/material/Button';
+
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDropzone } from 'react-dropzone';
@@ -243,12 +244,24 @@ const LoadFiles = (props) => {
         //console.log('Respuesta del servidor:', response);
 
         if (response.success) {
-          console.log('Archivo cargado con éxito:', response.message);
+          console.log('Error al cargar el archivo:', response.message || 'Error desconocido');
           // Realiza acciones adicionales después de cargar el archivo si es necesario
         } else {
-          console.error('Error al cargar el archivo:', response.message || 'Error desconocido');
+          //console.log('Archivo cargado con éxito', response.message );
           // Muestra el mensaje de error al usuario
-          alert(response.message || 'Error desconocido');
+          //alert(response.message || 'Error desconocido');
+          Swal.fire({
+            icon: 'success',
+            title: 'Archivo cargado con éxito',
+          }).then(() => {
+            // Cierra la ventana emergente después de mostrar el mensaje de éxito
+            setTimeout(() => {
+              Swal.close();
+              // También puedes agregar aquí la lógica para cerrar tu propia ventana modal
+              setIsModalOpen(false);
+              window.location.reload();
+            }, 0); // El tiempo en milisegundos (por ejemplo, 2000 ms = 2 segundos)
+          });
         }
       } else {
         console.error('Respuesta del servidor no válida:', response);
@@ -344,7 +357,7 @@ const LoadFiles = (props) => {
         <Button
           variant="contained"
           onClick={openModal}
-          style={{ marginLeft: 'auto', backgroundColor: 'darkred' }}
+          style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
         >
           Subir Archivo
         </Button>
@@ -392,26 +405,28 @@ const LoadFiles = (props) => {
                   </p>
                 )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                 <Button
                   variant="contained"
-                  style={{ marginLeft: '440px', backgroundColor: 'darkred' }}
+                  style={{ backgroundColor: 'gray', width: '48%' }}
                   onClick={closeModal}
                 >
                   Cancelar
                 </Button>
                 <Button
                   variant="contained"
-                  style={{ marginLeft: '10px', backgroundColor: 'darkred' }}
+                  style={{ backgroundColor: 'darkred', width: '48%' }}
                   onClick={handleFileUpload}
                 >
                   Empezar a Cargar
                 </Button>
+
               </div>
             </div>
           </div>
         )}
-  
+
         <Typography
           variant="h5"
           color="black"
@@ -431,7 +446,7 @@ const LoadFiles = (props) => {
         >
           Directorio: {urlActual}
         </Typography>
-  
+
         {/* Agrega condición para el label "Buscar por Nombre" */}
         {!isModalOpen && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
