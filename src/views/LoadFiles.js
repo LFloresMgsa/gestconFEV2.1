@@ -33,7 +33,7 @@ import {
   IconForZip,
   IconForMusic,
 } from './export-iconos/IconComponents';
-
+import LinearProgress from '@mui/material/LinearProgress';
 const apiHost = `${SERVICE_URL}`;
 
 const FooterRoot = styled('footer')(
@@ -392,17 +392,28 @@ const LoadFiles = (props) => {
               }} onClick={closeModal}>
                 &times;
               </div>
-              {/* Contenido de la ventana emergente */}
+              <Typography variant="h6" color="black" gutterBottom>
+                Seleccione los archivos a cargar
+              </Typography>
               <div {...getRootProps()} style={dropzoneStyle}>
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p>Suelta los archivos aquí...</p>
                 ) : (
-                  <p>
-                    {acceptedFiles.length > 0
-                      ? `Archivo seleccionado: ${acceptedFiles[0].name}`
-                      : 'Arrastra y suelta algunos archivos aquí, o haz clic para seleccionar archivos'}
-                  </p>
+                  <div>
+                    {acceptedFiles.length > 0 ? (
+                      <div>
+
+                        <ul>
+                          {acceptedFiles.map((file, index) => (
+                            <li key={index}>{file.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      <p style={{fontSize:'70px' , color:'gray', opacity:'0.3'}}>+</p>
+                    )}
+                  </div>
                 )}
               </div>
 
