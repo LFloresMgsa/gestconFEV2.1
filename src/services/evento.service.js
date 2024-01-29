@@ -42,7 +42,7 @@ async function cargarArchivo(file, urlActual, filename) {
       Swal.fire({
         icon: 'error',
         title: 'Error al cargar el archivo',
-        text: 'El archivo es demasiado pesado'
+        text: 'El archivo es demasiado pesado o ya existe'
       });
 
       // Retorna desde la función sin lanzar el error de nuevo

@@ -343,7 +343,6 @@ const LoadFiles = (props) => {
       >
         <Button
           variant="contained"
-
           onClick={openModal}
           style={{ marginLeft: 'auto', backgroundColor: 'darkred' }}
         >
@@ -360,14 +359,13 @@ const LoadFiles = (props) => {
             overflow: 'auto',
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
           }}>
-
             <div style={{
               backgroundColor: '#eeeeee',
               margin: '15% auto',
               padding: '50px',
               border: '1px solid #888',
               width: '60%',
-              position: 'relative',  // Agregado para que el position absolute funcione dentro de este contenedor
+              position: 'relative',
             }}>
               {/* Icono "X" en la esquina superior derecha */}
               <div style={{
@@ -394,7 +392,6 @@ const LoadFiles = (props) => {
                   </p>
                 )}
               </div>
-
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
                 <Button
                   variant="contained"
@@ -414,13 +411,12 @@ const LoadFiles = (props) => {
             </div>
           </div>
         )}
-
-
+  
         <Typography
           variant="h5"
           color="black"
-          align="center"  // Centra el texto
-          fontWeight="bold"  // Pone el texto en negrita
+          align="center"
+          fontWeight="bold"
           gutterBottom
         >
           {titulo}
@@ -430,29 +426,31 @@ const LoadFiles = (props) => {
           color="black"
           align="left"
           fontSize="16px"
-          fontWeight="normal"  // Pone el texto en negrita
+          fontWeight="normal"
           gutterBottom
         >
           Directorio: {urlActual}
         </Typography>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-          <TextField
-            label="Buscar por Nombre"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" >
-                  <SearchIcon style={{ color: '#8b0000' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-
-        </Box>
+  
+        {/* Agrega condición para el label "Buscar por Nombre" */}
+        {!isModalOpen && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <TextField
+              label="Buscar por Nombre"
+              variant="outlined"
+              size="small"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" >
+                    <SearchIcon style={{ color: '#8b0000' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+        )}
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
