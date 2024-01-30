@@ -10,9 +10,11 @@ import Mantenimiento from './views/Mantenimiento';
 
 import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
 import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
-
 import CrearUsuario from './mantenimientos/Usuario/CrearUsuario';
 
+import ListarRestricciones from './mantenimientos/Restricciones/ListarRestricciones';
+import CrearRestricciones from './mantenimientos/Restricciones/CrearRestricciones';
+import EditarRestricciones from './mantenimientos/Restricciones/EditarRestricciones';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
@@ -54,9 +56,23 @@ const AppRoutes = (props) => {
             path="/MantUsuario"
             render={(route) => <ListaUsuario {...props} {...route} />}
           />
+
           <Route
             path="/editar"
             render={(route) => <EditaUsuario {...props} {...route} />}
+          />
+
+          <Route
+            path="/crearRestric"
+            render={(route) => <CrearRestricciones {...props} {...route} />}
+          />
+          <Route
+            path="/MantRestric"
+            render={(route) => <ListarRestricciones {...props} {...route} />}
+          />
+          <Route
+            path="/editarRestric"
+            render={(route) => <EditarRestricciones {...props} {...route} />}
           />
         </>
       ) : (
