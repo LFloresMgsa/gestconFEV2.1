@@ -48,6 +48,7 @@ const AppRoutes = (props) => {
 
       {validaLogeo !== null && validaLogeo.trim() !== '' ? (
         <>
+        {/* ----------- USUARIOS */}
           <Route
             path="/crear"
             render={(route) => <CrearUsuario {...props} {...route} />}
@@ -61,7 +62,7 @@ const AppRoutes = (props) => {
             path="/editar"
             render={(route) => <EditaUsuario {...props} {...route} />}
           />
-
+        {/* ----------- RESTRICCION */}
           <Route
             path="/crearRestric"
             render={(route) => <CrearRestricciones {...props} {...route} />}
