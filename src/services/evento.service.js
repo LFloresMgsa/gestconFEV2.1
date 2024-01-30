@@ -9,6 +9,7 @@ export const eventoService = {
   obtenerToken,
   obtenerFilesv2,
   obtenerDirectorios,
+  obtenerTabParametros,
   cargarArchivo
 };
 
@@ -120,6 +121,17 @@ function obtenerUsuariov2(dataJson) {
   );
 }
 
+function obtenerTabParametros(dataJson) {
+  const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
+  const params = {};
+
+  //console.log(dataJson);
+
+  const url = `/api/gescon/sgm_tabparametros`;
+  return Fetch.post(url, params, options).then((res) =>
+    handleResponse(res, false)
+  );
+}
 
 function obtenerFilesv2(category) {
   try {

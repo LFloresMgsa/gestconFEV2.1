@@ -105,17 +105,20 @@ const LoadFiles = (props) => {
   const [urlActual, setUrlActual] = useState('');
   const [titulo, setTitulo] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState();
 
   const itemsPerPage = 10;
-
+  const [data, setData] = useState(null);
 
   const onDrop = useCallback((acceptedFiles) => {
-    // Actualiza el estado con el archivo seleccionado
-    setSelectedFile(acceptedFiles[0]);
+    // Actualiza el estado con los archivos seleccionados
+    setSelectedFile(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+    onDrop,
+    multiple: true, // Permite la carga de múltiples archivos
+  });
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -221,62 +224,127 @@ const LoadFiles = (props) => {
 
 
 
+  const listarRestricciones = async () => {
+    let _body = { Accion: "BUSCARRESTRIC" };
+    try {
+      const res = await eventoService.obtenerTabParametros(_body);
+  
+      if (res && Array.isArray(res[0]) && res[0].length > 0) {
+        const restricciones = res[0].map(item => item.Sgm_cRestricciones.trim());
+        return restricciones;
+      } else {
+        console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+        return [];
+      }
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+      return [];
+    }
+  };
+  
+  const listaTamanio = async () => {
+    let _body = { Accion: "BUSCARTAMANIO" };
+    try {
+      const res = await eventoService.obtenerTabParametros(_body);
+  
+      if (res && Array.isArray(res[0]) && res[0].length > 0) {
+        const tamanioPermitidoString = res[0][0]?.Sgm_cRestricciones?.replace(/,/g, ''); // Elimina comas
+        //console.log(tamanioPermitidoString);
+        //console.log(Sgm_cRestricciones);
+        const tamanioPermitido = parseInt(tamanioPermitidoString, 10);
+        //console.log(tamanioPermitido);
+        return tamanioPermitido;
+      } else {
+        console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+      return null;
+    }
+  };
+
+
 
   const handleFileUpload = async () => {
-
-
-
     try {
-      if (!selectedFile) {
+      if (!selectedFile || selectedFile.length === 0) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
           text: 'No se ha seleccionado ningún archivo.'
         });
-        //console.error('No se ha seleccionado ningún archivo.');
         return;
       }
-
-      const response = await eventoService.cargarArchivo(selectedFile, urlActual, selectedFile.name);
-
-
-      if (response) {
-        //console.log('Respuesta del servidor:', response);
-
-        if (response.success) {
-          console.log('Error al cargar el archivo:', response.message || 'Error desconocido');
-          // Realiza acciones adicionales después de cargar el archivo si es necesario
-        } else {
-          //console.log('Archivo cargado con éxito', response.message );
-          // Muestra el mensaje de error al usuario
-          //alert(response.message || 'Error desconocido');
+  
+      const restricciones = await listarRestricciones();
+      const tamanioPermitido = await listaTamanio();
+  
+      if (!restricciones || restricciones.length === 0 || tamanioPermitido === null) {
+        console.error('Error: No se obtuvieron restricciones o tamaño permitido.');
+        return;
+      }
+  
+      let successFlag = true;
+  
+      for (const file of selectedFile) {
+        // Verificar si ya existe un archivo con el mismo nombre
+        const existingFile = documentos.find((doc) => doc.fileName === file.name);
+        if (existingFile) {
+          successFlag = false;
           Swal.fire({
-            icon: 'success',
-            title: 'Archivo cargado con éxito',
-          }).then(() => {
-            // Cierra la ventana emergente después de mostrar el mensaje de éxito
-            setTimeout(() => {
-              Swal.close();
-              // También puedes agregar aquí la lógica para cerrar tu propia ventana modal
-              setIsModalOpen(false);
-              window.location.reload();
-            }, 0); // El tiempo en milisegundos (por ejemplo, 2000 ms = 2 segundos)
+            icon: 'error',
+            title: 'Error',
+            text: 'Ya existe un archivo con el mismo nombre.'
           });
+          break;
         }
-      } else {
-        console.error('Respuesta del servidor no válida:', response);
+        if (file.size > tamanioPermitido) {
+          successFlag = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'El tamaño del archivo supera el límite permitido de 50mb.'
+          });
+          break;
+        }  
+
+        // Verificar si la extensión del archivo está en la lista de restricciones
+        const fileExtension = file.name.slice(((file.name.lastIndexOf(".") - 1) >>> 0) + 2);
+        if (restricciones.includes(`.${fileExtension}`)) {
+          successFlag = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: `La carga de archivos con extensión .${fileExtension} está restringida.`
+          });
+          break;
+        }
+  
+        const response = await eventoService.cargarArchivo(file, urlActual, file.name);
+  
+        if (response && response.success) {
+          successFlag = false;
+          console.error(`Error al cargar el archivo ${file.name}:`, response.message || 'Error desconocido');
+          break;
+        }
+      }
+  
+      if (successFlag) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Todos los archivos cargados con éxito'
+        }).then(() => {
+          setIsModalOpen(false);
+          window.location.reload();
+        });
       }
     } catch (error) {
-
-      // console.error('Error selectedFile:',selectedFile);
-      // console.error('Error selectedFileName:',selectedFile.name);
-      // console.error('Error urlActual:',urlActual);
-      // console.error('Error en la carga del archivo-:', error.message);
-
-      // Muestra el mensaje de error al usuario
+      console.error('Error durante la carga de archivos:', error.message || 'Error desconocido');
       alert(error.message || 'Error desconocido');
     }
   };
+  
 
 
 
@@ -411,7 +479,7 @@ const LoadFiles = (props) => {
                         </ul>
                       </div>
                     ) : (
-                      <p style={{fontSize:'70px' , color:'gray', opacity:'0.3'}}>+</p>
+                      <p style={{ fontSize: '70px', color: 'gray', opacity: '0.3' }}>+</p>
                     )}
                   </div>
                 )}
