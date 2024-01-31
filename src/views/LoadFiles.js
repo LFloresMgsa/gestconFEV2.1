@@ -141,7 +141,7 @@ const LoadFiles = (props) => {
 
     const _IsLoged = storage.GetStorage("IsLoged");
     setIsLoged(_IsLoged);
-    console.log('_IsLoged : ', _IsLoged);
+    //console.log('_IsLoged : ', _IsLoged);
 
 
   }, [])
