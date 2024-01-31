@@ -84,29 +84,6 @@ const AppRoutes = (props) => {
         />
       )}
 
-
-
-
-
-      {/* <Route
-        exact
-        path="/soporte"
-        render={(route) => <Soporte {...props} {...route} />}
-      /> */}
-      {/* <Route
-        exact
-        path="/mantenimiento"
-        render={(route) => <Soporte {...props} {...route} />}
-      /> */}
-      {/* <Route
-        path="/gerencia"
-        render={(route) => <Categorias {...props} {...route} pCategory="" pTipo="publico" />}
-      />
-      <Route
-        path="/sistemas"
-        render={(route) => <Categorias {...props} {...route} pCategory="" pTipo="seguro" />}
-      /> */}
-      {/* Wildcard route to catch unknown paths and redirect to "/gestcon" */}
       <Route render={() => <Redirect to="/gestcon" />} />
     </Switch>
   );

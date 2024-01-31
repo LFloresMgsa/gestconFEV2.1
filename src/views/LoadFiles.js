@@ -112,6 +112,7 @@ const LoadFiles = (props) => {
   const itemsPerPage = 10;
   const [data, setData] = useState(null);
 
+  const [isLoged, setIsLoged] = useState(false);
 
   let _accesoSubida = '';
 
@@ -135,11 +136,18 @@ const LoadFiles = (props) => {
     setIsModalOpen(false);
   };
 
+  // Load de Pagina
   useEffect(() => {
-    
-    //console.log('_accesoSubida: ' , _accesoSubida);
 
-  }, []);
+    const _IsLoged = storage.GetStorage("IsLoged");
+    setIsLoged(_IsLoged);
+    console.log('_IsLoged : ', _IsLoged);
+
+
+  }, [])
+
+
+
 
   useEffect(() => {
 
@@ -185,7 +193,7 @@ const LoadFiles = (props) => {
       try {
 
 
-        
+
 
 
         const res = await eventoService.obtenerFilesv2(category);
@@ -438,25 +446,27 @@ const LoadFiles = (props) => {
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
-        <Button
-          variant="contained"
-          onClick={() => {
-            _accesoSubida=storage.GetStorage("Sgm_cAccesodeSubida");
-            console.log('_accesoSubida : ', _accesoSubida);
-            if (!_accesoSubida || _accesoSubida !== 'A') {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Debes tener acceso para subir.'
-              });
-            } else {
-              openModal();
-            }
-          }}
-          style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
-        >
-          Subir Archivo
-        </Button>
+        {isLoged && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              _accesoSubida=storage.GetStorage("Sgm_cAccesodeSubida");
+              console.log('_accesoSubida : ', _accesoSubida);
+              if (!_accesoSubida || _accesoSubida !== 'A') {
+                Swal.fire({
+                  icon: 'warning',
+                  title: 'Advertencia',
+                  text: 'Debes tener acceso para subir.'
+                });
+              } else {
+                openModal();
+              }
+            }}
+            style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
+          >
+            Subir Archivo
+          </Button>
+        )}
         {isModalOpen && (
           <div style={{
             position: 'fixed',
