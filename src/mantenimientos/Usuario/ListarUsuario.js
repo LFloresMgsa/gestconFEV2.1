@@ -179,12 +179,23 @@ const ListarUsuario = (props) => {
 
   const [accesosSubida, setAccesosSubida] = useState(() => {
     const storedState = localStorage.getItem('accesosSubida');
-    return storedState ? JSON.parse(storedState) : {};
+    return storedState ? JSON.parse(desencriptar(storedState)) : {};
   });
-
+  
   useEffect(() => {
-    localStorage.setItem('accesosSubida', JSON.stringify(accesosSubida));
+    localStorage.setItem('accesosSubida', encriptar(JSON.stringify(accesosSubida)));
   }, [accesosSubida]);
+  
+  // Función para encriptar
+  const encriptar = (data) => {
+    return btoa(data);
+  };
+  
+  // Función para desencriptar
+  const desencriptar = (data) => {
+    return atob(data);
+  };
+
 
   const handleAccesosSubidaChange = async (usuario, newValue) => {
     console.log("Cambio de estado para usuario", usuario, "Nuevo valor:", newValue);

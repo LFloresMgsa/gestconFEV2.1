@@ -121,19 +121,12 @@ const Login = () => {
 				// cookies.set('Sgm_cAccesodeSubida', _result[0].Sgm_cAccesodeSubida, { path: "/" });
 				// cookies.set('IsLoged', true, { path: "/" });
 
-
-				console.log('Login .. ini')
-
 				storage.SetStorage("IsLoged", "true");
 				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
 				storage.SetStorage("Sgm_cNombre", _result[0].Sgm_cNombre);
 				storage.SetStorage("Sgm_cAccesodeSubida", _result[0].Sgm_cAccesodeSubida);
 				storage.SetStorage("Sgm_cPerfil", _result[0].Sgm_cPerfil);
-
-				console.log('Login .. fin')
-
-				//console.log(_result[0].Sgm_cPerfil);
-				console.log('IsLoged después de almacenar:', storage.GetStorage("IsLoged"));
+				
 				setError('');
 
 

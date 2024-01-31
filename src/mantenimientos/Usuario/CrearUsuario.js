@@ -14,6 +14,7 @@ import fondo from '../../imagenes/fondotodos.png'
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Swal from 'sweetalert2';
+import md5 from 'md5';
 import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';  // Import FormControl
 const CrearUsuario = () => {
 
@@ -36,7 +37,20 @@ const CrearUsuario = () => {
     const [Sgm_cObservaciones, setObservaciones] = useState('')
     const [Sgm_cPerfil, setPerfil] = useState('')
     const [Sgm_cAccesodeSubida, setAccesoSubida] = useState('X')
+    const [perfiles, setPerfiles] = useState([]);
 
+    useEffect(() => {
+        const obtenerPerfiles = async () => {
+            try {
+                const perfilesObtenidos = await listarPerfil();
+                setPerfiles(perfilesObtenidos);
+            } catch (error) {
+                console.error('Error al obtener perfiles:', error);
+            }
+        };
+
+        obtenerPerfiles();
+    }, []);
 
     const insertarUsuario = async (e) => {
         try {
@@ -55,7 +69,7 @@ const CrearUsuario = () => {
                 Accion: "INSERTAR",
                 Sgm_cUsuario: Sgm_cUsuario,
                 Sgm_cNombre: Sgm_cNombre,
-                Sgm_cContrasena: Sgm_cContrasena,
+                Sgm_cContrasena: md5(Sgm_cContrasena),
                 Sgm_cObservaciones: Sgm_cObservaciones,
                 Sgm_cPerfil: Sgm_cPerfil,
                 Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
@@ -135,6 +149,10 @@ const CrearUsuario = () => {
     `
     );
 
+    const handleUsuarioChange = (e) => {
+        // Convertir el valor a mayúsculas antes de establecerlo en el estado
+        setUsuario(e.target.value.toUpperCase());
+    };
 
     const cancelar = async (e) => {
         history.push({
@@ -142,6 +160,25 @@ const CrearUsuario = () => {
         });
         setLoading(false);
     }
+
+    const listarPerfil = async () => {
+        let _body = { Accion: "BUSCARPERFIL" };
+        try {
+            const res = await eventoService.obtenerTabParametros(_body);
+
+            if (res && Array.isArray(res[0]) && res[0].length > 0) {
+                const restricciones = res[0].map(item => item.Sgm_cRestricciones.trim());
+                return restricciones;
+            } else {
+                console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error al obtener datos:", error);
+            return [];
+        }
+    };
+
     return (
 
         <div style={{ ...fondoStyle, marginTop: '35px' }}>
@@ -168,11 +205,12 @@ const CrearUsuario = () => {
                             <TextField
                                 label="Usuario"
                                 value={Sgm_cUsuario}
-                                onChange={(e) => setUsuario(e.target.value)}
+                                onChange={handleUsuarioChange}
                                 name="textformat"
                                 id="usuario"
                                 variant="standard"
                             />
+
                             <TextField
                                 label="Nombre"
                                 value={Sgm_cNombre}
@@ -208,8 +246,11 @@ const CrearUsuario = () => {
                                     onChange={(e) => setPerfil(e.target.value)}
                                     name="textformat"
                                 >
-                                    <MenuItem value="Root">Root</MenuItem>
-                                    <MenuItem value="Admin">Admin</MenuItem>
+                                    {perfiles.map((perfil) => (
+                                        <MenuItem key={perfil} value={perfil}>
+                                            {perfil}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                             <div>

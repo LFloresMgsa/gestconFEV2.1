@@ -19,7 +19,7 @@ const TreeComponent = () => {
   const [_directorio, setDatos] = useState([]); // Estado para almacenar los datos, inicializado como null
   const initialExpandedNodes = JSON.parse(localStorage.getItem('expandedNodes')) || [];
   const [expandedNodes, setExpandedNodes] = useState(initialExpandedNodes);
-
+  const cookies = new Cookies();
   useEffect(() => {
 
     function filtrarConTexto(elemento, texto) {

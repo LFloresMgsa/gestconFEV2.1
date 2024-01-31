@@ -188,6 +188,24 @@ const EditaUsuario = (props) => {
         setLoading(false);
     }
 
+    //     const listarPerfil = async () => {
+    //     let _body = { Accion: "BUSCARPERFIL" };
+    //     try {
+    //         const res = await eventoService.obtenerTabParametros(_body);
+
+    //         if (res && Array.isArray(res[0]) && res[0].length > 0) {
+    //             const restricciones = res[0].map(item => item.Sgm_cRestricciones.trim());
+    //             return restricciones;
+    //         } else {
+    //             console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+    //             return [];
+    //         }
+    //     } catch (error) {
+    //         console.error("Error al obtener datos:", error);
+    //         return [];
+    //     }
+    // };
+
     return (
 
         <div style={{ ...fondoStyle, marginTop: '35px' }}>

@@ -31,6 +31,7 @@ const AppRoutes = (props) => {
         <Redirect to="/gestcon" />
       </Route>
 
+
       <Route path="/gestcon" render={(route) => <Dashboard {...props} {...route} />} />
 
 
