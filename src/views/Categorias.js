@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, Component } from 'react';
 import { LoadFiles } from './LoadFiles';
 import fondo from '../imagenes/fondotodos.png';
 import { eventoService } from '../services/evento.service';
-
+import { storage } from "../storage.js";
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
@@ -26,7 +26,9 @@ class Categorias extends Component {
 
     this.buscaValor(security).then(_valor => {
 
-      if (!cookies.get('Sgm_cUsuario')) {
+      const _Usuario= storage.GetStorage("Sgm_cUsuario");
+
+      if (!_Usuario) {
 
        // console.log(_valor);
 

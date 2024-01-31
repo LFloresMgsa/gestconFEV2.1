@@ -11,6 +11,8 @@ import AppFooter from '../../components/layout/AppFooter.js';
 import { eventoService } from '../../services/evento.service';
 import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Swal from 'sweetalert2';
 import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';  // Import FormControl
 const CrearUsuario = () => {
@@ -33,6 +35,8 @@ const CrearUsuario = () => {
     const [Sgm_cContrasena, setContrasena] = useState('')
     const [Sgm_cObservaciones, setObservaciones] = useState('')
     const [Sgm_cPerfil, setPerfil] = useState('')
+    const [Sgm_cAccesodeSubida, setAccesoSubida] = useState('X')
+
 
     const insertarUsuario = async (e) => {
         try {
@@ -53,7 +57,8 @@ const CrearUsuario = () => {
                 Sgm_cNombre: Sgm_cNombre,
                 Sgm_cContrasena: Sgm_cContrasena,
                 Sgm_cObservaciones: Sgm_cObservaciones,
-                Sgm_cPerfil: Sgm_cPerfil
+                Sgm_cPerfil: Sgm_cPerfil,
+                Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
             };
 
             await eventoService.obtenerUsuariov2(_body).then(
@@ -207,11 +212,28 @@ const CrearUsuario = () => {
                                     <MenuItem value="Admin">Admin</MenuItem>
                                 </Select>
                             </FormControl>
+                            <div>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={Sgm_cAccesodeSubida === 'A'}
+                                            onChange={(e) => {
+                                                console.log('Antes de cambiar:', Sgm_cAccesodeSubida);
+                                                setAccesoSubida(e.target.checked ? 'A' : 'X');
+                                                console.log('Después de cambiar:', Sgm_cAccesodeSubida);
+                                            }}
+                                            inputProps={{ 'aria-label': 'Marcar/Desmarcar Accesos en Subida' }}
+                                        />
+                                    }
+                                    label="Accesos en Subida :"
+                                />
+                                {Sgm_cAccesodeSubida}
+                            </div>
                         </Grid>
 
                     </Grid>
 
-                    <Grid container spacing={2} style={{marginTop:'2px'}}>
+                    <Grid container spacing={2} style={{ marginTop: '2px' }}>
                         <Grid item xs={8}>
                             <table>
                                 <tbody>

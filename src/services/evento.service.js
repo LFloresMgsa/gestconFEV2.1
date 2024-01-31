@@ -121,6 +121,8 @@ function obtenerUsuariov2(dataJson) {
   );
 }
 
+
+
 function obtenerTabParametros(dataJson) {
   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
   const params = {};

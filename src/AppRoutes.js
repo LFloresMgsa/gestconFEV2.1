@@ -5,7 +5,7 @@ import Dashboard from './views/Dashboard';
 import Categorias from './views/Categorias';
 import Login from './views/Login';
 import Logout from './views/Logout';
-import Soporte from './views/Soporte';
+import Soporte from './Soporte.js';
 import Mantenimiento from './views/Mantenimiento';
 
 import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
@@ -17,12 +17,12 @@ import CrearRestricciones from './mantenimientos/Restricciones/CrearRestriccione
 import EditarRestricciones from './mantenimientos/Restricciones/EditarRestricciones';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
-
+import { storage } from "./storage.js";
 
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
-
-  const [validaLogeo, setValidaLogeo] = useState(cookies.get('Sgm_cUsuario') || '')
+  const _Usuario= storage.GetStorage("Sgm_cUsuario");
+  const [validaLogeo, setValidaLogeo] = useState(_Usuario || '')
 
 
   return (

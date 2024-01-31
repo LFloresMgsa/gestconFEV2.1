@@ -1,4 +1,6 @@
 import { createStore, compose, applyMiddleware } from 'redux';
+import { storage } from './storage.js'
+
 import {
   createStateSyncMiddleware,
   initMessageListener,
@@ -64,6 +66,9 @@ const reduxStateSyncConfig = {
 // acction reprenset the current action begin proceessed
 // reducer always return a new state or the old stat. It never modify the state
 const reducer = (state = initialState, action) => {
+
+  //storage.IniciaVariablesGlobales();
+
   switch (action.type) {
     case 'SET_GLOBALS':
       return { ...state, global: action.payload };

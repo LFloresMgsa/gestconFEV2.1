@@ -13,7 +13,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import FolderOpen from '@mui/icons-material/FolderOpenOutlined';
 import FolderNew from '@mui/icons-material/CreateNewFolderOutlined';
-
+import { storage } from "../../../storage.js";
 const TreeComponent = () => {
 
   const [_directorio, setDatos] = useState([]); // Estado para almacenar los datos, inicializado como null
@@ -36,6 +36,8 @@ const TreeComponent = () => {
     const BuscarDirectorios = async () => {
       try {
         const directorio = await eventoService.obtenerDirectorios();
+        const _Perfil = storage.GetStorage("Sgm_cPerfil");
+        const _Usuario = storage.GetStorage("Sgm_cUsuario");
         //console.log(directorio);
 
 
@@ -43,9 +45,10 @@ const TreeComponent = () => {
 
         let tabs = directorio.flatMap(elemento => filtrarConTexto(elemento, "All")).filter(Boolean);
 
-        if (cookies.get('Sgm_cUsuario') != "" && cookies.get('Sgm_cUsuario') != null) {
-          tabs = directorio.flatMap(elemento => filtrarConTexto(elemento, cookies.get('Sgm_cPerfil')));
+        if (_Usuario !== "" && _Usuario !== null) {
+          tabs = directorio.flatMap(elemento => filtrarConTexto(elemento, _Perfil));
         }
+
         //----------------------------------------------------------
 
 

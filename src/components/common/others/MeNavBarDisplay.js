@@ -31,7 +31,7 @@ import { useDispatch } from 'react-redux';
 import { appThemes, appColors } from '../../../theme/AppThemes';
 import { AccountBoxOutlined } from '@mui/icons-material';
 import Cookies from 'universal-cookie';
-
+import { storage } from "../../../storage.js";
 const cookies = new Cookies();
 
 const StyledMenu = styled(Menu)(
@@ -149,7 +149,10 @@ const MeNavBarDisplay = (props) => {
 
   // Load de Pagina
   useEffect(() => {
-    setIsLoged(cookies.get('IsLoged'));
+    
+    const _IsLoged= storage.GetStorage("IsLoged");
+    setIsLoged(_IsLoged);
+// console.log('_IsLoged : ', _IsLoged);
 
 
   }, [])

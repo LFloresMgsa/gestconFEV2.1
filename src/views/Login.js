@@ -9,6 +9,10 @@ import md5 from 'md5';
 import Cookies from 'universal-cookie';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+import { storage } from "../storage.js";
+
+
 const cookies = new Cookies();
 
 const useStyles = makeStyles(theme => ({
@@ -72,7 +76,8 @@ const Login = () => {
 
 			// Utiliza la variable local en lugar del estado Token
 			if (tokenResponse) {
-				cookies.set('token', tokenResponse.token, { path: "/" });
+				storage.SetStorage("token", tokenResponse.token);
+				//cookies.set('token', tokenResponse.token, { path: "/" });
 				setError('');
 			}
 		} catch (error) {
@@ -86,9 +91,9 @@ const Login = () => {
 		try {
 			// Genera un token
 			await BuscarToken();
-
+			const token = storage.GetStorage("token");
 			// Valida si encontró el token
-			if (!cookies.get('token')) {
+			if (!token) {
 				throw "Error: Token no existe";
 			}
 
@@ -108,17 +113,31 @@ const Login = () => {
 			);
 
 			if (_result[0].Sgm_cUsuario === username) {
-				cookies.set('Sgm_cUsuario', _result[0].Sgm_cUsuario, { path: "/" });
-				cookies.set('Sgm_cNombre', _result[0].Sgm_cNombre, { path: "/" });
-				cookies.set('Sgm_cContrasena', _result[0].Sgm_cContrasena, { path: "/" });
-				cookies.set('Sgm_cObservaciones', _result[0].Sgm_cObservaciones, { path: "/" });
-				cookies.set('Sgm_cPerfil', _result[0].Sgm_cPerfil, { path: "/" });
+				// cookies.set('Sgm_cUsuario', _result[0].Sgm_cUsuario, { path: "/" });
+				// cookies.set('Sgm_cNombre', _result[0].Sgm_cNombre, { path: "/" });
+				//cookies.set('Sgm_cContrasena', _result[0].Sgm_cContrasena, { path: "/" });
+				//cookies.set('Sgm_cObservaciones', _result[0].Sgm_cObservaciones, { path: "/" });
+				//cookies.set('Sgm_cPerfil', _result[0].Sgm_cPerfil, { path: "/" });
+				// cookies.set('Sgm_cAccesodeSubida', _result[0].Sgm_cAccesodeSubida, { path: "/" });
+				// cookies.set('IsLoged', true, { path: "/" });
 
-				cookies.set('IsLoged', true, { path: "/" });
 
+				console.log('Login .. ini')
+
+				storage.SetStorage("IsLoged", "true");
+				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
+				storage.SetStorage("Sgm_cNombre", _result[0].Sgm_cNombre);
+				storage.SetStorage("Sgm_cAccesodeSubida", _result[0].Sgm_cAccesodeSubida);
+				storage.SetStorage("Sgm_cPerfil", _result[0].Sgm_cPerfil);
+
+				console.log('Login .. fin')
+
+				//console.log(_result[0].Sgm_cPerfil);
+				console.log('IsLoged después de almacenar:', storage.GetStorage("IsLoged"));
 				setError('');
 
-				if (cookies.get('token')) {
+
+				if (token) {
 					window.location.href = "./gestcon";
 				}
 			}
@@ -133,12 +152,14 @@ const Login = () => {
 		}
 	};
 
+
+
 	return (
 		<Container component="main" maxWidth="xs" style={{ border: '1.5px solid #8b0000', borderRadius: '5px', padding: '16px' }}>
 			<Paper elevation={0}>
 				<form>
-				
-					<label style={{ fontWeight: 'bold', fontSize: '1.2em', textAlign: 'center' , color:'darkred'}}>Ingreso al Sistema</label>
+
+					<label style={{ fontWeight: 'bold', fontSize: '1.2em', textAlign: 'center', color: 'darkred' }}>Ingreso al Sistema</label>
 					<div>.</div>
 					<div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column', textAlign: 'left', fontWeight: 'bold' }}>
 						<label htmlFor="username">Usuario:</label>
@@ -166,7 +187,7 @@ const Login = () => {
 					{/* Etiqueta y campo de Contraseña */}
 					<div>.</div>
 					<div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'column', textAlign: 'left', marginTop: '-20px', fontWeight: 'bold' }}>
-						
+
 						<label htmlFor="username">Contraseña:</label>
 						<TextField
 							id="password"

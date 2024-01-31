@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { eventoService } from '../../services/evento.service';
 import md5 from 'md5'; // Importa la función md5 si aún no lo has hecho
-import { storage } from "../../views/storage.js";
+import { storage } from "../../storage.js";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Divider, TextField, InputAdornment, Button } from '@mui/material';
 import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';

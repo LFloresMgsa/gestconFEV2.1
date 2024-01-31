@@ -1,5 +1,5 @@
 import Cookies from 'universal-cookie';
-
+import { storage } from "../storage.js";
 const cookies = new Cookies();
 
 
@@ -7,7 +7,9 @@ export function authHeader(isMultiPart, newToken) {
 
 
   try {
-    const Token = cookies.get('token');
+
+    
+    const Token = storage.GetStorage("token");
 /*
 
     console.log('----------------------');

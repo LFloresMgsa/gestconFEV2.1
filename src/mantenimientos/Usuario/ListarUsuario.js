@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { eventoService } from '../../services/evento.service';
-import md5 from 'md5'; // Importa la función md5 si aún no lo has hecho
-import { storage } from "../../views/storage.js";
+import md5 from 'md5';
+import { storage } from "../../storage.js";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Divider, TextField, InputAdornment, Button } from '@mui/material';
 import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,14 +15,14 @@ import fondo from '../../imagenes/fondotodos.png'
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Swal from 'sweetalert2';
-const ListarUsuario = (props) => {
+import Checkbox from '@mui/material/Checkbox';
 
+const ListarUsuario = (props) => {
   const fondoStyle = {
-    backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`, // Opacidad agregada con rgba
+    backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     height: '100vh',
-    // Otras propiedades de estilo según tus necesidades
   };
   const history = useHistory();
   const [data, setData] = useState([]);
@@ -30,24 +30,24 @@ const ListarUsuario = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-
-  // Cargar al inicio de la página
   useEffect(() => {
     listar();
   }, []);
-
-
 
   const listar = async () => {
     let _body = { Accion: "BUSCARTODOS" };
     try {
       const res = await eventoService.obtenerUsuariov2(_body);
 
-      //console.log("Respuesta de la API:", res);
-
       if (res && res[0]) {
-        //  console.log(res[0]);
         setData(res[0]);
+
+        // Obtener y almacenar los accesos de subida
+        const accesosSubidaData = res[0].reduce((acc, item) => {
+          acc[item.Sgm_cUsuario] = item.Sgm_cAccesodeSubida;
+          return acc;
+        }, {});
+        setAccesosSubida(accesosSubidaData);
       } else {
         console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
       }
@@ -55,7 +55,6 @@ const ListarUsuario = (props) => {
       console.error("Error al obtener datos:", error);
     }
   };
-
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -68,7 +67,6 @@ const ListarUsuario = (props) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
 
   const FooterRoot = styled('footer')(
     ({ theme }) => css`
@@ -112,31 +110,28 @@ const ListarUsuario = (props) => {
   
       .legal {
         display: flex;
-        font-size: 0.6  rem;
+        font-size: 0.6rem;
         justify-content: space-between;
       }
     `
   );
 
-  // procedimiento para CREAR un catalogo con SP MySQL
   const crear = () => {
     history.push({
       pathname: '/crear',
-      state: { }
+      state: {}
     });
   }
 
-  const editar = (Sgm_cUsuario, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
-
-    const usuario = { Sgm_cObservaciones, Sgm_cPerfil, Sgm_cUsuario, Sgm_cNombre };
-
+  const editar = (Sgm_cUsuario, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil, Sgm_cAccesodeSubida) => {
+    const usuario = { Sgm_cObservaciones, Sgm_cPerfil, Sgm_cUsuario, Sgm_cNombre, Sgm_cAccesodeSubida };
     history.push({
       pathname: `/editar`,
       state: { usuario }
     });
   };
 
-  const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil) => {
+  const eliminar = async (Sgm_cUsuario, Sgm_cContrasena, Sgm_cNombre, Sgm_cObservaciones, Sgm_cPerfil, Sgm_cAccesodeSubida) => {
     try {
       const result = await Swal.fire({
         title: "¿Estás seguro?",
@@ -147,7 +142,7 @@ const ListarUsuario = (props) => {
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminarlo"
       });
-  
+
       if (result.isConfirmed) {
         const _body = {
           Accion: "ELIMINAR",
@@ -155,21 +150,22 @@ const ListarUsuario = (props) => {
           Sgm_cContrasena,
           Sgm_cNombre,
           Sgm_cObservaciones,
-          Sgm_cPerfil
+          Sgm_cPerfil,
+          Sgm_cAccesodeSubida
         };
-  
+
         const res = await eventoService.obtenerUsuariov2(_body);
-  
+
         if (res.error) {
           throw res.error;
         }
-  
+
         Swal.fire({
           title: "¡Eliminado!",
           text: "El usuario ha sido eliminado.",
           icon: "success"
         });
-  
+
         listar();
       }
     } catch (error) {
@@ -180,6 +176,45 @@ const ListarUsuario = (props) => {
       });
     }
   };
+
+  const [accesosSubida, setAccesosSubida] = useState(() => {
+    const storedState = localStorage.getItem('accesosSubida');
+    return storedState ? JSON.parse(storedState) : {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem('accesosSubida', JSON.stringify(accesosSubida));
+  }, [accesosSubida]);
+
+  const handleAccesosSubidaChange = async (usuario, newValue) => {
+    console.log("Cambio de estado para usuario", usuario, "Nuevo valor:", newValue);
+    try {
+      // Cambia el estado local primero
+      setAccesosSubida((prevAccesos) => ({ ...prevAccesos, [usuario]: newValue }));
+  
+      // Luego realiza la actualización en el backend
+      const _body = {
+        Accion: "ACTUALIZARACCESOSUBIDA",
+        Sgm_cUsuario: usuario,
+        Sgm_cAccesodeSubida: newValue
+      };
+  
+      const res = await eventoService.obtenerUsuariov2(_body);
+  
+      if (res.error) {
+        throw res.error;
+      }
+  
+      //console.log("Actualización exitosa en el backend");
+      listar();
+    } catch (error) {
+      console.error("Error al cambiar el estado:", error);
+      
+      // En caso de error, restaura el estado local
+      setAccesosSubida((prevAccesos) => ({ ...prevAccesos, [usuario]: prevAccesos[usuario] === 'A' ? 'X' : 'A' }));
+    }
+  };
+  
 
   return (
     <div style={{ ...fondoStyle, marginTop: '35px' }}>
@@ -193,7 +228,6 @@ const ListarUsuario = (props) => {
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
-
         <Box>
           <Typography
             variant="h5"
@@ -232,25 +266,28 @@ const ListarUsuario = (props) => {
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Nombre</TableCell>
-                  {/* <TableCell align="center"
-                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
-                  >Contraseña</TableCell> */}
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Observaciones</TableCell>
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   >Perfil</TableCell>
+                  <TableCell align="center"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  >Accesos de subida</TableCell>
                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   ></TableCell>
                   <TableCell align="left"
+                    sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                  ></TableCell>
+                   <TableCell align="left"
                     sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                   ></TableCell>
                   <TableCell align="left" sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}>
                     <IconButton>
-                      <AddCircleOutlineOutlinedIcon style={{color:'white', fontSize:'32px'}} 
-                      onClick={crear}
+                      <AddCircleOutlineOutlinedIcon style={{ color: 'white', fontSize: '32px' }}
+                        onClick={crear}
                       />
                     </IconButton>
                   </TableCell>
@@ -261,23 +298,28 @@ const ListarUsuario = (props) => {
                   <TableRow key={item.Sgm_cUsuario}>
                     <TableCell align="left">{item.Sgm_cUsuario}</TableCell>
                     <TableCell align="left">{item.Sgm_cNombre}</TableCell>
-                    {/* <TableCell align="center">{item.Sgm_cContrasena}</TableCell>  */}
                     <TableCell align="left">{item.Sgm_cObservaciones}</TableCell>
                     <TableCell align="left">{item.Sgm_cPerfil}</TableCell>
+                    {/* <TableCell align="center">{item.Sgm_cAccesodeSubida}</TableCell> */}
                     <TableCell align="center">
-                      <IconButton size="medium" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>
-                        <EditNoteOutlinedIcon tyle={{fontSize:'30px'}} />
+                      <Checkbox
+                        checked={accesosSubida[item.Sgm_cUsuario] === 'A'}
+                        onChange={(e) => handleAccesosSubidaChange(item.Sgm_cUsuario, e.target.checked ? 'A' : 'X')}
+                        inputProps={{ 'aria-label': 'Marcar/Desmarcar Accesos en Subida' }}
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton size="medium" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil, item.Sgm_cAccesodeSubida)}>
+                        <EditNoteOutlinedIcon tyle={{ fontSize: '30px' }} />
                       </IconButton>
                     </TableCell>
                     <TableCell align="center">
                       <IconButton size="medium" style={{ color: 'orange' }}
-                        onClick={() => eliminar(item.Sgm_cUsuario, item.Sgm_cContrasena, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}
+                        onClick={() => eliminar(item.Sgm_cUsuario, item.Sgm_cContrasena, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil, item.Sgm_cAccesodeSubida)}
                       >
-                        <DeleteForeverOutlinedIcon style={{fontSize:'30px'}}/>
+                        <DeleteForeverOutlinedIcon style={{ fontSize: '30px' }} />
                       </IconButton>
                     </TableCell>
-
-                    {/* <TableCell align="left"><Button variant="contained" size="small" color="primary" onClick={() => editar(item.Sgm_cUsuario, item.Sgm_cNombre, item.Sgm_cObservaciones, item.Sgm_cPerfil)}>Editar</Button></TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

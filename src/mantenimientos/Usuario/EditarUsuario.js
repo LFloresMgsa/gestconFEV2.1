@@ -13,6 +13,8 @@ import { Divider } from '@mui/material';
 import { styled, css } from '@mui/system';
 import fondo from '../../imagenes/fondotodos.png'
 import Swal from 'sweetalert2';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 const EditaUsuario = (props) => {
 
     const fondoStyle = {
@@ -33,6 +35,8 @@ const EditaUsuario = (props) => {
     const [Sgm_cContrasena, setContrasena] = useState('')
     const [Sgm_cObservaciones, setObservaciones] = useState('')
     const [Sgm_cPerfil, setPerfil] = useState('')
+    const [Sgm_cAccesodeSubida, setAccesoSubida] = useState('')
+
 
 
     const { location } = props;
@@ -45,6 +49,7 @@ const EditaUsuario = (props) => {
         setContrasena(usuario.Sgm_cContrasena);
         setObservaciones(usuario.Sgm_cObservaciones);
         setPerfil(usuario.Sgm_cPerfil);
+        setAccesoSubida(usuario.Sgm_cAccesodeSubida);
 
         //  listarusuario()
     }, [])
@@ -129,7 +134,7 @@ const EditaUsuario = (props) => {
   const editarUsuario = async (e) => {
     try {
         // Validate that none of the required fields are empty
-        if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil) {
+        if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil ) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -144,7 +149,8 @@ const EditaUsuario = (props) => {
             Sgm_cNombre: Sgm_cNombre,
             Sgm_cContrasena: md5(Sgm_cContrasena),
             Sgm_cObservaciones: Sgm_cObservaciones,
-            Sgm_cPerfil: Sgm_cPerfil
+            Sgm_cPerfil: Sgm_cPerfil,
+            Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
         };
 
         await eventoService.obtenerUsuariov2(_body).then(
@@ -249,6 +255,33 @@ const EditaUsuario = (props) => {
                                 variant="standard"
 
                             />
+                              <TextField
+                                label="Accesos de Subida"
+                                value={Sgm_cAccesodeSubida}
+                                onChange={(e) => setAccesoSubida(e.target.value)}
+                                name="textformat"
+                                id="accesodesubida"
+                                variant="standard"
+                                disabled
+
+                            />
+                               {/* <div>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={Sgm_cAccesodeSubida === 'A'}
+                                            onChange={(e) => {
+                                                console.log('Antes de cambiar:', Sgm_cAccesodeSubida);
+                                                setAccesoSubida(e.target.checked ? 'A' : 'X');
+                                                console.log('Después de cambiar:', Sgm_cAccesodeSubida);
+                                            }}
+                                            inputProps={{ 'aria-label': 'Marcar/Desmarcar Accesos en Subida' }}
+                                        />
+                                    }
+                                    label="Accesos en Subida"
+                                />
+                                {Sgm_cAccesodeSubida}
+                            </div> */}
                         </Grid>
 
                     </Grid>

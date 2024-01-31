@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import styled from 'styled-components';
+import { storage } from "../storage.js";
 
 const cookies = new Cookies();
 
@@ -24,13 +25,26 @@ const Logout = () => {
 
   const cerrarSesion = () => {
     // Lógica para cerrar sesión y redirigir
-    cookies.remove('Sgm_cUsuario', { path: '/' });
-    cookies.remove('Sgm_cPerfil', { path: '/' });
-    cookies.remove('Sgm_cNombre', { path: '/' });
-    cookies.remove('Sgm_cContrasena', { path: '/' });
-    cookies.remove('Sgm_cObservaciones', { path: '/' });
-    cookies.remove('token', { path: '/' });
-    cookies.remove('IsLoged', { path: '/' });
+    // cookies.remove('Sgm_cUsuario', { path: '/' });
+    // //cookies.remove('Sgm_cPerfil', { path: '/' });
+    // cookies.remove('Sgm_cNombre', { path: '/' });
+    //cookies.remove('Sgm_cContrasena', { path: '/' });
+    //cookies.remove('Sgm_cObservaciones', { path: '/' });
+    // cookies.remove('Sgm_cAccesodeSubida', { path: '/' });
+    // cookies.remove('token', { path: '/' });
+    // cookies.remove('IsLoged', { path: '/' });
+
+    console.log('Logout .. ini')
+
+    storage.DelStorage("IsLoged","");
+    storage.DelStorage("token","");
+    storage.DelStorage("Sgm_cNombre","");
+    storage.DelStorage("Sgm_cUsuario","");
+    storage.DelStorage("Sgm_cPerfil","");
+    storage.DelStorage("Sgm_cAccesodeSubida","");
+    storage.DelStorage("accesosSubida","");
+
+    console.log('Logout .. fin')
 
     // Oculta la alerta después de cierto tiempo (opcional)
     setTimeout(() => {

@@ -17,11 +17,13 @@ import TableRow from '@mui/material/TableRow';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@mui/material/Button';
-
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDropzone } from 'react-dropzone';
 import fon from '../imagenes/buscar.png'
+import { storage } from "../storage.js";
 import {
   IconForXlsx,
   IconForImagenes,
@@ -110,6 +112,10 @@ const LoadFiles = (props) => {
   const itemsPerPage = 10;
   const [data, setData] = useState(null);
 
+
+  let _accesoSubida = '';
+
+
   const onDrop = useCallback((acceptedFiles) => {
     // Actualiza el estado con los archivos seleccionados
     setSelectedFile(acceptedFiles);
@@ -129,8 +135,15 @@ const LoadFiles = (props) => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    
+    //console.log('_accesoSubida: ' , _accesoSubida);
+
+  }, []);
 
   useEffect(() => {
+
+
 
     //---------------------------------
     // Obtén la cadena de consulta de la URL
@@ -172,7 +185,7 @@ const LoadFiles = (props) => {
       try {
 
 
-        //console.log(category);
+        
 
 
         const res = await eventoService.obtenerFilesv2(category);
@@ -228,7 +241,7 @@ const LoadFiles = (props) => {
     let _body = { Accion: "BUSCARRESTRIC" };
     try {
       const res = await eventoService.obtenerTabParametros(_body);
-  
+
       if (res && Array.isArray(res[0]) && res[0].length > 0) {
         const restricciones = res[0].map(item => item.Sgm_cRestricciones.trim());
         return restricciones;
@@ -241,12 +254,12 @@ const LoadFiles = (props) => {
       return [];
     }
   };
-  
+
   const listaTamanio = async () => {
     let _body = { Accion: "BUSCARTAMANIO" };
     try {
       const res = await eventoService.obtenerTabParametros(_body);
-  
+
       if (res && Array.isArray(res[0]) && res[0].length > 0) {
         const tamanioPermitidoString = res[0][0]?.Sgm_cRestricciones?.replace(/,/g, ''); // Elimina comas
         //console.log(tamanioPermitidoString);
@@ -268,6 +281,9 @@ const LoadFiles = (props) => {
 
   const handleFileUpload = async () => {
     try {
+
+
+
       if (!selectedFile || selectedFile.length === 0) {
         Swal.fire({
           icon: 'error',
@@ -276,17 +292,17 @@ const LoadFiles = (props) => {
         });
         return;
       }
-  
+
       const restricciones = await listarRestricciones();
       const tamanioPermitido = await listaTamanio();
-  
+
       if (!restricciones || restricciones.length === 0 || tamanioPermitido === null) {
         console.error('Error: No se obtuvieron restricciones o tamaño permitido.');
         return;
       }
-  
+
       let successFlag = true;
-  
+
       for (const file of selectedFile) {
         // Verificar si ya existe un archivo con el mismo nombre
         const existingFile = documentos.find((doc) => doc.fileName === file.name);
@@ -307,7 +323,7 @@ const LoadFiles = (props) => {
             text: 'El tamaño del archivo supera el límite permitido de 50mb.'
           });
           break;
-        }  
+        }
 
         // Verificar si la extensión del archivo está en la lista de restricciones
         const fileExtension = file.name.slice(((file.name.lastIndexOf(".") - 1) >>> 0) + 2);
@@ -320,16 +336,16 @@ const LoadFiles = (props) => {
           });
           break;
         }
-  
+
         const response = await eventoService.cargarArchivo(file, urlActual, file.name);
-  
+
         if (response && response.success) {
           successFlag = false;
           console.error(`Error al cargar el archivo ${file.name}:`, response.message || 'Error desconocido');
           break;
         }
       }
-  
+
       if (successFlag) {
         Swal.fire({
           icon: 'success',
@@ -344,7 +360,7 @@ const LoadFiles = (props) => {
       alert(error.message || 'Error desconocido');
     }
   };
-  
+
 
 
 
@@ -424,7 +440,19 @@ const LoadFiles = (props) => {
       >
         <Button
           variant="contained"
-          onClick={openModal}
+          onClick={() => {
+            _accesoSubida=storage.GetStorage("Sgm_cAccesodeSubida");
+            console.log('_accesoSubida : ', _accesoSubida);
+            if (!_accesoSubida || _accesoSubida !== 'A') {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Debes tener acceso para subir.'
+              });
+            } else {
+              openModal();
+            }
+          }}
           style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
         >
           Subir Archivo
