@@ -7,8 +7,7 @@ export const storage = {
   GetStorageN,
   DelStorage,
   SetStorageObj,
-  GetStorageObj,
-  ClearStorage
+  GetStorageObj
 };
 
 let secretKey = "";
@@ -25,12 +24,6 @@ obtenerSgm_cUsuario();
 
 function IniciaVariablesGlobales() {
   //ClearStorage('Sgm_cPerfil', '');
-  return true;
-}
-
-
-function ClearStorage(pVariable, pValue) {
-  localStorage.setItem(pVariable, pValue); // Codificar en Base64
   return true;
 }
 
@@ -52,10 +45,14 @@ function SetStorage(pVariable, pValue) {
   }
 }
 
+
+
+
 function SetStorageObj(pVariable, pValue) {
   const obj = JSON.stringify(pValue);
   try {
     const encryptedValue = CryptoJS.AES.encrypt(obj, secretKey).toString();
+
     localStorage.setItem(pVariable, encryptedValue);
     return true;
   } catch (error) {
