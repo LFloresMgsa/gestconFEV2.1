@@ -24,6 +24,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDropzone } from 'react-dropzone';
 import fon from '../imagenes/buscar.png'
 import { storage } from "../storage.js";
+import { SHA256 } from 'crypto-js';
 import {
   IconForXlsx,
   IconForImagenes,
@@ -115,7 +116,7 @@ const LoadFiles = (props) => {
   const [isLoged, setIsLoged] = useState(false);
 
   let _accesoSubida = '';
-
+  let _validarUsuario = '';
 
   const onDrop = useCallback((acceptedFiles) => {
     // Actualiza el estado con los archivos seleccionados
@@ -450,10 +451,17 @@ const LoadFiles = (props) => {
           <Button
             variant="contained"
             onClick={() => {
-              _accesoSubida=storage.GetStorage("Sgm_cAccesodeSubida");
-              // _validarUsuario=storage.GetStorage("Sgm_cUsuario");
-              // _llave=storage.GetStorageLlave("Sgm_cAccesodeSubida");
+              _accesoSubida = storage.GetStorage("Sgm_cAccesodeSubida");
+              _validarUsuario = storage.GetStorage("Sgm_cUsuario");
 
+              const accesoSubidaEncriptado = localStorage.getItem("Sgm_cAccesodeSubida");
+              const usuarioEncriptado = localStorage.getItem("Sgm_cUsuario");
+
+              // Ahora, accesoSubidaEncriptado y usuarioEncriptado contienen los valores encriptados
+              console.log('Acceso de Subida encriptado: ', accesoSubidaEncriptado);
+              console.log('Usuario encriptado: ', usuarioEncriptado);
+
+              
               console.log('_accesoSubida : ', _accesoSubida);
               if (!_accesoSubida || _accesoSubida !== 'A') {
                 Swal.fire({

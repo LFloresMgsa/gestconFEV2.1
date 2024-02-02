@@ -7,7 +7,9 @@ export const storage = {
   GetStorageN,
   DelStorage,
   SetStorageObj,
-  GetStorageObj
+  GetStorageObj,
+  hideAccesoSubida,
+  isAccesoSubidaHidden
 };
 
 let secretKey = "";
@@ -23,17 +25,21 @@ async function obtenerSgm_cUsuario() {
 obtenerSgm_cUsuario();
 
 function IniciaVariablesGlobales() {
-  //ClearStorage('Sgm_cPerfil', '');
+  console.log("Antes de eliminar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  
+  // No eliminamos físicamente, sino que "ocultamos" el campo
+  storage.hideAccesoSubida();
+
+  console.log("Después de ocultar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  
   return true;
 }
-
-
 
 function SetStorage(pVariable, pValue) {
   if (pValue !== undefined) {
     try {
       const encryptedValue = CryptoJS.AES.encrypt(pValue, secretKey).toString();
-      localStorage.setItem(pVariable, encryptedValue);
+      sessionStorage.setItem(pVariable, encryptedValue);
       return true;
     } catch (error) {
       console.error('Error durante el cifrado:', error);
@@ -45,15 +51,12 @@ function SetStorage(pVariable, pValue) {
   }
 }
 
-
-
-
 function SetStorageObj(pVariable, pValue) {
   const obj = JSON.stringify(pValue);
   try {
     const encryptedValue = CryptoJS.AES.encrypt(obj, secretKey).toString();
 
-    localStorage.setItem(pVariable, encryptedValue);
+    sessionStorage.setItem(pVariable, encryptedValue);
     return true;
   } catch (error) {
     console.error('Error durante el cifrado:', error);
@@ -62,12 +65,12 @@ function SetStorageObj(pVariable, pValue) {
 }
 
 function DelStorage(pVariable) {
-  localStorage.removeItem(pVariable);
+  sessionStorage.removeItem(pVariable);
   return true;
 }
 
 function GetStorage(pVariable) {
-  const encryptedValue = localStorage.getItem(pVariable) || "";
+  const encryptedValue = sessionStorage.getItem(pVariable) || "";
 
   if (encryptedValue === "") {
     return "";
@@ -83,7 +86,7 @@ function GetStorage(pVariable) {
 }
 
 function GetStorageN(pVariable) {
-  const encryptedValue = localStorage.getItem(pVariable) || "";
+  const encryptedValue = sessionStorage.getItem(pVariable) || "";
 
   if (encryptedValue === "") {
     return "";
@@ -99,7 +102,7 @@ function GetStorageN(pVariable) {
 }
 
 function GetStorageObj(pVariable) {
-  const encryptedValue = localStorage.getItem(pVariable) || "";
+  const encryptedValue = sessionStorage.getItem(pVariable) || "";
 
   if (encryptedValue === "") {
     return [];
@@ -112,4 +115,14 @@ function GetStorageObj(pVariable) {
     console.error('Error durante el descifrado:', error);
     return [];
   }
+}
+
+function hideAccesoSubida() {
+  // No almacenamos la clave en el sessionStorage, solo establecemos el valor en memoria
+  storage.Sgm_cAccesodeSubidaHidden = true;
+}
+
+function isAccesoSubidaHidden() {
+  // Verificamos si el campo está "oculto" en memoria
+  return storage.Sgm_cAccesodeSubidaHidden === true;
 }
