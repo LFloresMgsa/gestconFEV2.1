@@ -57,6 +57,7 @@
         "dompurify": "^2.3.6",
         "history": "^4.10.1",
         "i18next": "^20.6.1",
+        "in-memory-storage": "^0.1.0",
         "jsonwebtoken": "^9.0.2",
         "lodash": "^4.17.21",
         "material-ui-dropzone": "^3.5.0",
