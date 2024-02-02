@@ -451,6 +451,9 @@ const LoadFiles = (props) => {
             variant="contained"
             onClick={() => {
               _accesoSubida=storage.GetStorage("Sgm_cAccesodeSubida");
+              // _validarUsuario=storage.GetStorage("Sgm_cUsuario");
+              // _llave=storage.GetStorageLlave("Sgm_cAccesodeSubida");
+
               console.log('_accesoSubida : ', _accesoSubida);
               if (!_accesoSubida || _accesoSubida !== 'A') {
                 Swal.fire({
