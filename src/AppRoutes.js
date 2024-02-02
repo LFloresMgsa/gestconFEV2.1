@@ -6,7 +6,7 @@ import Categorias from './views/Categorias';
 import Login from './views/Login';
 import Logout from './views/Logout';
 import Soporte from './Soporte.js';
-import Mantenimiento from './views/Mantenimiento';
+
 
 import EditaUsuario from './mantenimientos/Usuario/EditarUsuario';
 import ListaUsuario from './mantenimientos/Usuario/ListarUsuario';
