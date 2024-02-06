@@ -144,7 +144,7 @@ const ListarUsuario = (props) => {
     try {
       const result = await Swal.fire({
         title: "¿Estás seguro?",
-        text: "No podrás revertir esto",
+        text: "Eliminar a este usuario." ,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

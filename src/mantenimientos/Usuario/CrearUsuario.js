@@ -54,52 +54,53 @@ const CrearUsuario = () => {
 
     const insertarUsuario = async (e) => {
         try {
-            // Verificar que todos los campos estén llenos
-            if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil) {
-                // Mostrar un mensaje de error o realizar alguna acción
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se logró crear el usuario. Por favor, completa todos los campos.'
-                });
-                return;
-            }
-
-            let _body = {
-                Accion: "INSERTAR",
-                Sgm_cUsuario: Sgm_cUsuario,
-                Sgm_cNombre: Sgm_cNombre,
-                Sgm_cContrasena: md5(Sgm_cContrasena),
-                Sgm_cObservaciones: Sgm_cObservaciones,
-                Sgm_cPerfil: Sgm_cPerfil,
-                Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
-            };
-
-            await eventoService.obtenerUsuario(_body).then(
-                (res) => {
-                    setData(res[0]);
-                    Swal.fire({
-
-                        icon: 'success',
-                        title: 'Usuario',
-                        text: 'Registrado',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                },
-                (error) => {
-                    console.log(error);
-                    setError(error);
-                }
-            );
-        } finally {
-            history.push({
-                pathname: '/MantUsuario'
+          // Verificar que todos los campos estén llenos
+          if (!Sgm_cUsuario || !Sgm_cNombre || !Sgm_cContrasena || !Sgm_cObservaciones || !Sgm_cPerfil) {
+            // Mostrar un mensaje de error
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: ' Por favor, completa todos los campos.'
             });
-            setLoading(false);
+            return; // Salir de la función si falta algún campo
+          }
+      
+          let _body = {
+            Accion: "INSERTAR",
+            Sgm_cUsuario: Sgm_cUsuario,
+            Sgm_cNombre: Sgm_cNombre,
+            Sgm_cContrasena: md5(Sgm_cContrasena),
+            Sgm_cObservaciones: Sgm_cObservaciones,
+            Sgm_cPerfil: Sgm_cPerfil,
+            Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
+          };
+      
+          await eventoService.obtenerUsuario(_body).then(
+            (res) => {
+              setData(res[0]);
+              Swal.fire({
+                icon: 'success',
+                title: 'Usuario',
+                text: 'Registrado',
+                showConfirmButton: false,
+                timer: 1500
+              });
+              // Redireccionar solo si todos los campos están llenos y se registra el usuario correctamente
+              history.push({
+                pathname: '/MantUsuario'
+              });
+            },
+            (error) => {
+              console.log(error);
+              setError(error);
+            }
+          );
+        } finally {
+          // No es necesario redirigir aquí, ya que la redirección se realiza dentro del bloque `if`
+          setLoading(false);
         }
-    };
-
+      };
+      
 
     const FooterRoot = styled('footer')(
         ({ theme }) => css`

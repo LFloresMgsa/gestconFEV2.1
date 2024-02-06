@@ -138,7 +138,7 @@ const EditaUsuario = (props) => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'No se actualizó , falta llenar los campos'
+                text: 'No se actualizó el usuario. Por favor, complete en los campos.'
             });
             return;
         }
@@ -164,6 +164,9 @@ const EditaUsuario = (props) => {
                     showConfirmButton: false,
                     timer: 1500
                 });
+                history.push({
+                    pathname: '/MantUsuario'
+                });
             },
             (error) => {
                 console.log(error);
@@ -174,9 +177,7 @@ const EditaUsuario = (props) => {
     } catch (error) {
         alert(error);
     } finally {
-        history.push({
-            pathname: '/MantUsuario'
-        });
+
         setLoading(false);
     }
 };
