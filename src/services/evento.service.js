@@ -5,7 +5,6 @@ import Fetch from '../helpers/Fetch';
 import Swal from 'sweetalert2';
 export const eventoService = {
   obtenerUsuario,
-  obtenerUsuariov2,
   obtenerToken,
   obtenerFilesv2,
   obtenerDirectorios,
@@ -109,17 +108,17 @@ function obtenerUsuario(dataJson) {
   );
 }
 
-function obtenerUsuariov2(dataJson) {
-  const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
-  const params = {};
+// function obtenerUsuariov2(dataJson) {
+//   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
+//   const params = {};
 
-  //console.log(dataJson);
+//   //console.log(dataJson);
 
-  const url = `/api/gescon/sgm_usuarios`;
-  return Fetch.post(url, params, options).then((res) =>
-    handleResponse(res, false)
-  );
-}
+//   const url = `/api/gescon/sgm_usuarios`;
+//   return Fetch.post(url, params, options).then((res) =>
+//     handleResponse(res, false)
+//   );
+// }
 
 
 

@@ -17,6 +17,15 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Swal from 'sweetalert2';
 import Checkbox from '@mui/material/Checkbox';
 
+// Coloca las funciones encriptar y desencriptar aquí
+const encriptar = (data) => {
+  return btoa(data);
+};
+
+const desencriptar = (data) => {
+  return atob(data);
+};
+
 const ListarUsuario = (props) => {
   const fondoStyle = {
     backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`,
@@ -37,7 +46,7 @@ const ListarUsuario = (props) => {
   const listar = async () => {
     let _body = { Accion: "BUSCARTODOS" };
     try {
-      const res = await eventoService.obtenerUsuariov2(_body);
+      const res = await eventoService.obtenerUsuario(_body);
 
       if (res && res[0]) {
         setData(res[0]);
@@ -154,7 +163,7 @@ const ListarUsuario = (props) => {
           Sgm_cAccesodeSubida
         };
 
-        const res = await eventoService.obtenerUsuariov2(_body);
+        const res = await eventoService.obtenerUsuario(_body);
 
         if (res.error) {
           throw res.error;
@@ -186,16 +195,6 @@ const ListarUsuario = (props) => {
     localStorage.setItem('accesosSubida', encriptar(JSON.stringify(accesosSubida)));
   }, [accesosSubida]);
   
-  // Función para encriptar
-  const encriptar = (data) => {
-    return btoa(data);
-  };
-  
-  // Función para desencriptar
-  const desencriptar = (data) => {
-    return atob(data);
-  };
-
 
   const handleAccesosSubidaChange = async (usuario, newValue) => {
     console.log("Cambio de estado para usuario", usuario, "Nuevo valor:", newValue);
@@ -210,7 +209,7 @@ const ListarUsuario = (props) => {
         Sgm_cAccesodeSubida: newValue
       };
   
-      const res = await eventoService.obtenerUsuariov2(_body);
+      const res = await eventoService.obtenerUsuario(_body);
   
       if (res.error) {
         throw res.error;

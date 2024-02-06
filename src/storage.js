@@ -25,12 +25,12 @@ async function obtenerSgm_cUsuario() {
 obtenerSgm_cUsuario();
 
 function IniciaVariablesGlobales() {
-  console.log("Antes de eliminar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  // console.log("Antes de eliminar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
   
-  // No eliminamos físicamente, sino que "ocultamos" el campo
-  storage.hideAccesoSubida();
+  // // No eliminamos físicamente, sino que "ocultamos" el campo
+  // storage.hideAccesoSubida();
 
-  console.log("Después de ocultar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  // console.log("Después de ocultar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
   
   return true;
 }
