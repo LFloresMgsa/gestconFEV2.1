@@ -9,7 +9,8 @@ export const eventoService = {
   obtenerFilesv2,
   obtenerDirectorios,
   obtenerTabParametros,
-  cargarArchivo
+  cargarArchivo,
+  actualizaarchivo
 };
 
 function obtenerToken(dataJson) {
@@ -24,15 +25,29 @@ function obtenerToken(dataJson) {
   );
 }
 
-async function cargarArchivo(file, urlActual, filename) {
+
+async function cargarArchivo(file, urlActual, filename,nombreUsuario) {
   try {
+    // Verificar que todos los campos estén llenos
+    if (!file || !urlActual || !filename ) {
+      // Mostrar un mensaje de error
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, completa todos los campos.'
+      });
+      return; // Salir de la función si falta algún campo
+    }
+
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('urlDestino', urlActual);
-    formData.append('filename', filename);
+    
+    formData.append('Sgm_cFile', file);
+    formData.append('Sgm_cUrlActual', urlActual);
+    formData.append('Sgm_cFilename', filename);
+    formData.append('Sgm_cNombreUsuario', nombreUsuario);
+
 
     const url = '/api/gescon/cargararchivo';
-
     const response = await Fetch.postFile(url, formData);
 
     if (!response.ok) {
@@ -49,6 +64,7 @@ async function cargarArchivo(file, urlActual, filename) {
       return;
     }
 
+    // Manejar la respuesta adecuadamente si es necesario
     return handleResponse(response, false);
 
   } catch (error) {
@@ -65,22 +81,6 @@ async function cargarArchivo(file, urlActual, filename) {
 
 
 
-// function cargarArchivo(file, category) {
-//   try {
-//     const options = { headers: authHeader() };
-
-//     // Agrega los parámetros directamente en la URL
-//     const url = `/api/gescon/cargararchivo?file=${encodeURIComponent(file)}&category=${encodeURIComponent(category)}`;
-//     console.log('URL de carga de archivo:', url);
-
-//     return Fetch.post(url, null, options).then((res) =>
-//       handleResponse(res, false)
-//     );
-//   } catch (error) {
-//     console.error('Error en la solicitud de carga de archivo:', error);
-//     throw error;
-//   }
-// }
 
 function obtenerDirectorios() {
 
@@ -103,6 +103,19 @@ function obtenerUsuario(dataJson) {
   //console.log(dataJson);
 
   const url = `/api/gescon/sgm_usuarios/auth`;
+  return Fetch.post(url, params, options).then((res) =>
+    handleResponse(res, false)
+  );
+}
+
+
+function actualizaarchivo(dataJson) {
+  const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
+  const params = {};
+
+  //console.log(dataJson);
+
+  const url = `/api/gescon/actualizaarchivo`;
   return Fetch.post(url, params, options).then((res) =>
     handleResponse(res, false)
   );

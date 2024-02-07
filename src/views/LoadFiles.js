@@ -115,8 +115,43 @@ const LoadFiles = (props) => {
 
   const [isLoged, setIsLoged] = useState(false);
 
+
+  const [Sgm_cUrlActual, setUrl] = useState('')
+  const [Sgm_cFilename, setFileName] = useState('')
+  const [Sgm_cNombreUsuario, setNombreUsuario] = useState('')
+  const [Sgm_cFechaMod, setFechaMod] = useState('')
+
   let _accesoSubida = '';
   let _validarUsuario = '';
+
+
+  const actualizaarchivo = async (Sgm_cUrlActual, Sgm_cFilename, Sgm_cNombreUsuario) => {
+    try {
+      // Construir el objeto de datos para enviar al servicio
+      const body = {
+        Accion: "INSERTAR",
+        Sgm_cUrlActual: Sgm_cUrlActual,
+        Sgm_cFilename: Sgm_cFilename,
+        Sgm_cNombreUsuario: Sgm_cNombreUsuario
+      };
+
+      // Llamar al servicio para insertar los datos
+      const response = await eventoService.actualizaarchivo(body);
+
+      // Manejar la respuesta adecuadamente
+      if (response && !response.error) {
+        console.log('Datos insertados correctamente:', response);
+        return response; // Devolver los datos insertados
+      } else {
+        console.error('Error al insertar los datos:', response.error);
+        return null; // Devolver null o lanzar una excepción según sea necesario
+      }
+    } catch (error) {
+      console.error('Error en la función actualizaarchivo:', error);
+      throw error; // Lanzar el error para que pueda ser manejado en otro lugar si es necesario
+    }
+  };
+
 
   const onDrop = useCallback((acceptedFiles) => {
     // Actualiza el estado con los archivos seleccionados
@@ -143,7 +178,6 @@ const LoadFiles = (props) => {
     const _IsLoged = storage.GetStorage("IsLoged");
     setIsLoged(_IsLoged);
     //console.log('_IsLoged : ', _IsLoged);
-
 
   }, [])
 
@@ -245,7 +279,6 @@ const LoadFiles = (props) => {
   };
 
 
-
   const listarRestricciones = async () => {
     let _body = { Accion: "BUSCARRESTRIC" };
     try {
@@ -287,6 +320,7 @@ const LoadFiles = (props) => {
   };
 
 
+  const nombreUsuario = storage.GetStorage('Sgm_cNombre');
 
   const handleFileUpload = async () => {
     try {
@@ -346,8 +380,15 @@ const LoadFiles = (props) => {
           break;
         }
 
-        const response = await eventoService.cargarArchivo(file, urlActual, file.name);
+        // Almacenar el nombre de usuario en el almacenamiento local después de iniciar sesión
 
+
+
+
+        // const response = await eventoService.cargarArchivo(file, urlActual, file.name, nombreUsuario);
+        const response = await eventoService.cargarArchivo(file, urlActual, file.name, nombreUsuario);
+
+        console.log(response);
         if (response && response.success) {
           successFlag = false;
           console.error(`Error al cargar el archivo ${file.name}:`, response.message || 'Error desconocido');
@@ -360,8 +401,34 @@ const LoadFiles = (props) => {
           icon: 'success',
           title: 'Todos los archivos cargados con éxito'
         }).then(() => {
+
+            // Llamar a la función actualizaarchivo con los datos necesarios
+            actualizaarchivo(urlActual, selectedFile[0].name, nombreUsuario)
+
+          
+
+            .then((res) => {
+              if (res) {
+                setData(res);
+                console.log('Datos insertados correctamente:', res);
+              } else {
+                console.error('Error al insertar los datos');
+              }
+            })
+            .catch((error) => {
+              console.error('Error durante la inserción:', error);
+              // Manejar cualquier error que ocurra durante la inserción
+              setError(error.message || 'Error desconocido');
+            });
+            
+            console.log(urlActual);
+            console.log(selectedFile[0].name);
+            console.log(nombreUsuario);
+
           setIsModalOpen(false);
-          window.location.reload();
+  
+        
+          // window.location.reload(); // Recargar la página 
         });
       }
     } catch (error) {
@@ -452,17 +519,17 @@ const LoadFiles = (props) => {
             variant="contained"
             onClick={() => {
               _accesoSubida = storage.GetStorage("Sgm_cAccesodeSubida");
-              _validarUsuario = storage.GetStorage("Sgm_cUsuario");
+              // _validarUsuario = storage.GetStorage("Sgm_cUsuario");
 
-              const accesoSubidaEncriptado = localStorage.getItem("Sgm_cAccesodeSubida");
-              const usuarioEncriptado = localStorage.getItem("Sgm_cUsuario");
+              // const accesoSubidaEncriptado = localStorage.getItem("Sgm_cAccesodeSubida");
+              // const usuarioEncriptado = localStorage.getItem("Sgm_cUsuario");
 
-              // Ahora, accesoSubidaEncriptado y usuarioEncriptado contienen los valores encriptados
-              console.log('Acceso de Subida encriptado: ', accesoSubidaEncriptado);
-              console.log('Usuario encriptado: ', usuarioEncriptado);
+              // // Ahora, accesoSubidaEncriptado y usuarioEncriptado contienen los valores encriptados
+              // console.log('Acceso de Subida encriptado: ', accesoSubidaEncriptado);
+              // console.log('Usuario encriptado: ', usuarioEncriptado);
 
-              
-              console.log('_accesoSubida : ', _accesoSubida);
+
+              // console.log('_accesoSubida : ', _accesoSubida);
               if (!_accesoSubida || _accesoSubida !== 'A') {
                 Swal.fire({
                   icon: 'warning',
@@ -626,6 +693,12 @@ const LoadFiles = (props) => {
                   align="center"
                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                 >
+                  Propietario
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                >
                   Visualización
                 </TableCell>
               </TableRow>
@@ -639,6 +712,7 @@ const LoadFiles = (props) => {
                   <TableCell align="left">{item.fileName}</TableCell>
                   <TableCell align="center">{item.lastModified}</TableCell>
                   <TableCell align="center">{item.fileSize}</TableCell>
+                  <TableCell align="center">{item.Sgm_cNombreUsuario}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       variant="contained"
