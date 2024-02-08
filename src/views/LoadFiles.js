@@ -24,6 +24,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDropzone } from 'react-dropzone';
 import fon from '../imagenes/buscar.png'
 import { storage } from "../storage.js";
+import { parseISO , format } from 'date-fns';
 import { SHA256 } from 'crypto-js';
 import {
   IconForXlsx,
@@ -273,7 +274,7 @@ const LoadFiles = (props) => {
     //"Sgm_cUrlActual":"contabilidad\\manuales",
     let _body = { Accion: "LISTAR", Sgm_cUrlActual: pathValue };
 
-    console.log("pathValue: ", pathValue);
+    //console.log("pathValue: ", pathValue);
     try {
       const res = await eventoService.obtenerArchivosTabla(_body);
 
@@ -281,7 +282,7 @@ const LoadFiles = (props) => {
 
 
       if (res && res[0]) {
-        console.log(res[0]);
+        //console.log(res[0]);
 
         _entro = true;
 
@@ -552,11 +553,11 @@ const LoadFiles = (props) => {
   };
 
 
-  const parseISODate = (isoDate) => {
-    const parts = isoDate.split(/[-T:.Z]/);
-    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5], 0));
-    return date;
-  };
+ // Función para formatear la fecha
+ const formatDateTime = (dateString) => {
+  const date = parseISO(dateString); // Convierte la cadena de fecha en un objeto Date
+  return format(date, 'dd/MM/yyyy HH:mm:ss'); // Formatea la fecha y la hora
+};
 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
@@ -764,7 +765,7 @@ const LoadFiles = (props) => {
                   </TableCell>
                   <TableCell align="left">{item.Sgm_cFilename}</TableCell>
                   <TableCell align="center">
-                    {item.Sgm_cFechaMod ? parseISODate(item.Sgm_cFechaMod).toLocaleString() : 'Fecha inválida'}
+                  {item.Sgm_cFechaMod ? formatDateTime(item.Sgm_cFechaMod) : 'Fecha inválida'}
                   </TableCell>
                   <TableCell align="center">{formatFileSize(item.Sgm_cTamanio)}</TableCell>
                   <TableCell align="center">{item.Sgm_cNombreUsuario}</TableCell>

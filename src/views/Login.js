@@ -113,13 +113,6 @@ const Login = () => {
 			);
 
 			if (_result[0].Sgm_cUsuario === username) {
-				// cookies.set('Sgm_cUsuario', _result[0].Sgm_cUsuario, { path: "/" });
-				// cookies.set('Sgm_cNombre', _result[0].Sgm_cNombre, { path: "/" });
-				//cookies.set('Sgm_cContrasena', _result[0].Sgm_cContrasena, { path: "/" });
-				//cookies.set('Sgm_cObservaciones', _result[0].Sgm_cObservaciones, { path: "/" });
-				//cookies.set('Sgm_cPerfil', _result[0].Sgm_cPerfil, { path: "/" });
-				// cookies.set('Sgm_cAccesodeSubida', _result[0].Sgm_cAccesodeSubida, { path: "/" });
-				// cookies.set('IsLoged', true, { path: "/" });
 
 				storage.SetStorage("IsLoged", "true");
 				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
