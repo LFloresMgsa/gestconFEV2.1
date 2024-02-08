@@ -1,4 +1,3 @@
-// Importa React y otras dependencias necesarias
 import React, { Fragment, useEffect, useLayoutEffect, useState } from 'react';
 import {
   AppBar,
@@ -9,24 +8,19 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, useHistory } from 'react-router-dom';
+import { BrowserRouter, useHistory, Route, Switch } from 'react-router-dom';
 import { deepmerge } from '@mui/utils';
-
-// Importa el componente de carga
-import LoadingCircle from './views/LoadingCircle';
 
 import { appThemes, appColors } from './theme/AppThemes';
 import { GlobalStyle } from './GlobalStyles';
 import AppContent from './AppContent';
 import AppTopBar from './components/layout/AppTopBar';
 import AppFooter from './components/layout/AppFooter';
-
-// Resto de tu código ...
+import LoadingCircle from './views/LoadingCircle'; // Importa el componente LoadingCircle
 
 function App(props) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true); // Estado para controlar la carga
   const {
     showLoginBar,
     accessToken,
@@ -35,6 +29,7 @@ function App(props) {
     themeAppearance,
   } = props;
 
+  const [loading, setLoading] = useState(true); // Estado para controlar la carga
   const [theme, setTheme] = useState(defaultTheme);
   const [onServerError, setOnServerError] = useState(false);
 
@@ -99,25 +94,25 @@ function App(props) {
   }
 
   return (
-    <Fragment>
-      {loading ? ( // Muestra el componente de carga si la aplicación está cargando
-        <LoadingCircle />
-      ) : onServerError ? (
-        <ThemeProvider theme={theme}>
-          <h1>Error por el servicio no esta listo.</h1>
-        </ThemeProvider>
-      ) : (
-        <ThemeProvider theme={theme}>
-          <BrowserRouter getUserConfirmation={getConfirmation}>
-            <CssBaseline />
-            <GlobalStyle theme={theme} />
-            <AppTopBar />
+    <ThemeProvider theme={theme}>
+      <BrowserRouter getUserConfirmation={getConfirmation}>
+        <CssBaseline />
+        <GlobalStyle theme={theme} />
+        <AppTopBar />
+        <Switch>
+          <Route path="/gestcon">
+            {loading ? <LoadingCircle /> : <AppContent {...props} viewport={viewport} />}
+          </Route>
+          <Route path="/logout">
+            {loading ? <LoadingCircle /> : <AppContent {...props} viewport={viewport} />}
+          </Route>
+          <Route>
             <AppContent {...props} viewport={viewport} />
-            <AppFooter /> 
-          </BrowserRouter>
-        </ThemeProvider>
-      )}
-    </Fragment>
+          </Route>
+        </Switch>
+        <AppFooter />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

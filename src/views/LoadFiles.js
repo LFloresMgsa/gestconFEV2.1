@@ -110,8 +110,8 @@ const LoadFiles = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
 
-  const itemsPerPage = 3;
-  const [data, setData] = useState(null);
+  const itemsPerPage = 10;
+  const [data, setData] = useState([]);
 
   const [isLoged, setIsLoged] = useState(false);
 
@@ -186,11 +186,11 @@ const LoadFiles = (props) => {
   }, [])
 
 
-
+  let _entro;
 
   useEffect(() => {
 
-    let _entro;
+  
 
 
     //---------------------------------
@@ -250,42 +250,6 @@ const LoadFiles = (props) => {
     //   }
     // };
 
-    const fetchDocumentosData = async () => {
-
-      //---------------------------------
-      // Obtén la cadena de consulta de la URL
-      const queryString = window.location.search;
-
-      // Parsea la cadena de consulta para obtener los parámetros
-      const urlParams = new URLSearchParams(queryString);
-
-      // Obtiene el valor del parámetro 'path'
-      const pathValue = urlParams.get('path');
-
-
-      //"Sgm_cUrlActual":"contabilidad\\manuales",
-      let _body = { Accion: "LISTAR", Sgm_cUrlActual: pathValue };
-
-      console.log("pathValue: ", pathValue);
-      try {
-        const res = await eventoService.obtenerArchivosTabla(_body);
-
-        //console.log("Respuesta de la API:", res);
-
-
-        if (res && res[0]) {
-          console.log(res[0]);
-
-          _entro = true;
-
-          setData(res[0]);
-        } else {
-          console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
-        }
-      } catch (error) {
-        console.error("Error al obtener datos:", error);
-      }
-    };
 
 
     fetchDocumentosData();
@@ -293,7 +257,42 @@ const LoadFiles = (props) => {
   }, [props.pCategory]);
 
 
+  const fetchDocumentosData = async () => {
 
+    //---------------------------------
+    // Obtén la cadena de consulta de la URL
+    const queryString = window.location.search;
+
+    // Parsea la cadena de consulta para obtener los parámetros
+    const urlParams = new URLSearchParams(queryString);
+
+    // Obtiene el valor del parámetro 'path'
+    const pathValue = urlParams.get('path');
+
+
+    //"Sgm_cUrlActual":"contabilidad\\manuales",
+    let _body = { Accion: "LISTAR", Sgm_cUrlActual: pathValue };
+
+    console.log("pathValue: ", pathValue);
+    try {
+      const res = await eventoService.obtenerArchivosTabla(_body);
+
+      //console.log("Respuesta de la API:", res);
+
+
+      if (res && res[0]) {
+        console.log(res[0]);
+
+        _entro = true;
+
+        setData(res[0]);
+      } else {
+        console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+      }
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+    }
+  };
 
   const handleDocumentClick = (document) => {
     const encodedCategory = encodeURIComponent(selectedCategory);
@@ -472,9 +471,8 @@ const LoadFiles = (props) => {
 
 
           setIsModalOpen(false);
-
-
-          // window.location.reload(); // Recargar la página 
+          fetchDocumentosData();
+          //window.location.reload(); // Recargar la página 
         });
       }
     } catch (error) {
@@ -484,25 +482,20 @@ const LoadFiles = (props) => {
   };
 
 
-
+  const filteredData = Array.isArray(data) ? data.filter((documento) =>
+  documento && documento.Sgm_cFilename && documento.Sgm_cFilename.toLowerCase().includes(searchTerm.toLowerCase())
+) : [];
 
   const handleButtonClick = (item) => {
-    handleDocumentClick(item.fileName);
+    handleDocumentClick(item.Sgm_cFilename);
   };
 
 
-  if (data === null) {
-    return null; // o puedes hacer algo para manejar el caso en que data sea null
-  }
-
-
-  const filteredData = data.filter((documento) =>
-  documento && documento.Sgm_cFilename && documento.Sgm_cFilename.toLowerCase().includes(searchTerm.toLowerCase())
-);
 
 
   const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+
   const currentDocumentos = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -764,7 +757,7 @@ const LoadFiles = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.map((item, idx) => (
+              {currentDocumentos.map((item, idx) => (
                 <TableRow key={`${idx}_${indexOfFirstItem + idx}`}>
                   <TableCell align="center">
                     {renderFileTypeIcon(item.Sgm_cFilename)}

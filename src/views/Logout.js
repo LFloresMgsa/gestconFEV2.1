@@ -24,17 +24,7 @@ const Logout = () => {
   const [showAlert, setShowAlert] = useState(true);
 
   const cerrarSesion = () => {
-    // Lógica para cerrar sesión y redirigir
-    // cookies.remove('Sgm_cUsuario', { path: '/' });
-    // //cookies.remove('Sgm_cPerfil', { path: '/' });
-    // cookies.remove('Sgm_cNombre', { path: '/' });
-    //cookies.remove('Sgm_cContrasena', { path: '/' });
-    //cookies.remove('Sgm_cObservaciones', { path: '/' });
-    // cookies.remove('Sgm_cAccesodeSubida', { path: '/' });
-    // cookies.remove('token', { path: '/' });
-    // cookies.remove('IsLoged', { path: '/' });
 
-    console.log('Logout .. ini')
 
     storage.DelStorage("IsLoged","");
     storage.DelStorage("token","");
@@ -44,7 +34,6 @@ const Logout = () => {
     storage.DelStorage("Sgm_cAccesodeSubida","");
     storage.DelStorage("accesosSubida","");
 
-    console.log('Logout .. fin')
 
     // Oculta la alerta después de cierto tiempo (opcional)
     setTimeout(() => {
