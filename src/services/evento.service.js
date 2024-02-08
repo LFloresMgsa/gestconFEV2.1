@@ -10,7 +10,7 @@ export const eventoService = {
   obtenerDirectorios,
   obtenerTabParametros,
   cargarArchivo,
-  actualizaarchivo
+  obtenerArchivosTabla
 };
 
 function obtenerToken(dataJson) {
@@ -109,17 +109,22 @@ function obtenerUsuario(dataJson) {
 }
 
 
-function actualizaarchivo(dataJson) {
+function obtenerArchivosTabla(dataJson) {
   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
   const params = {};
 
   //console.log(dataJson);
 
-  const url = `/api/gescon/actualizaarchivo`;
+  const url = `/api/gescon/obtenerarchivo`;
   return Fetch.post(url, params, options).then((res) =>
     handleResponse(res, false)
   );
 }
+
+
+
+
+
 
 // function obtenerUsuariov2(dataJson) {
 //   const options = { headers: authHeader(), body: JSON.stringify(dataJson) };
@@ -146,6 +151,9 @@ function obtenerTabParametros(dataJson) {
     handleResponse(res, false)
   );
 }
+
+
+
 
 function obtenerFilesv2(category) {
   try {

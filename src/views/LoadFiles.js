@@ -110,7 +110,7 @@ const LoadFiles = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 3;
   const [data, setData] = useState(null);
 
   const [isLoged, setIsLoged] = useState(false);
@@ -125,32 +125,36 @@ const LoadFiles = (props) => {
   let _validarUsuario = '';
 
 
-  const actualizaarchivo = async (Sgm_cUrlActual, Sgm_cFilename, Sgm_cNombreUsuario) => {
+  const obtenerArchivosTabla = async (Sgm_cTipo, Sgm_cUrlActual, Sgm_cFilename, Sgm_cNombreUsuario, Sgm_cTamanio) => {
     try {
       // Construir el objeto de datos para enviar al servicio
       const body = {
         Accion: "INSERTAR",
+        Sgm_cTipo: Sgm_cTipo,
         Sgm_cUrlActual: Sgm_cUrlActual,
         Sgm_cFilename: Sgm_cFilename,
-        Sgm_cNombreUsuario: Sgm_cNombreUsuario
+        Sgm_cNombreUsuario: Sgm_cNombreUsuario,
+        Sgm_cTamanio: Sgm_cTamanio
       };
 
       // Llamar al servicio para insertar los datos
-      const response = await eventoService.actualizaarchivo(body);
-
+      const response = await eventoService.obtenerArchivosTabla(body);
+      //console.log(response);
       // Manejar la respuesta adecuadamente
       if (response && !response.error) {
-        console.log('Datos insertados correctamente:', response);
+        //      console.log('Datos insertados correctamente:', response);
         return response; // Devolver los datos insertados
       } else {
         console.error('Error al insertar los datos:', response.error);
         return null; // Devolver null o lanzar una excepción según sea necesario
       }
     } catch (error) {
-      console.error('Error en la función actualizaarchivo:', error);
+      console.error('Error en la función obtenerArchivosTabla:', error);
       throw error; // Lanzar el error para que pueda ser manejado en otro lugar si es necesario
     }
   };
+
+
 
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -186,10 +190,13 @@ const LoadFiles = (props) => {
 
   useEffect(() => {
 
+    let _entro;
 
 
     //---------------------------------
     // Obtén la cadena de consulta de la URL
+
+
     const queryString = window.location.search;
 
     // Parsea la cadena de consulta para obtener los parámetros
@@ -200,6 +207,7 @@ const LoadFiles = (props) => {
 
     setUrlActual(pathValue);
 
+
     const ultimoDirectorio = obtenerUltimoDirectorio(queryString);
     setTitulo(ultimoDirectorio.toUpperCase());
     //---------------------------------
@@ -209,7 +217,7 @@ const LoadFiles = (props) => {
 
 
     setSelectedCategory(category);
-
+    //console.log(category);
     function obtenerUltimoDirectorio(url) {
       // Obtener el valor del parámetro 'path' de la URL
       const queryParams = new URLSearchParams(url.split('?')[1]);
@@ -224,31 +232,64 @@ const LoadFiles = (props) => {
       return ultimoDirectorio;
     }
 
+    // const listarArchivos = async () => {
+    //   let _body = { Accion: "LISTAR" };
+    //   try {
+    //     const res = await eventoService.obtenerArchivosTabla(_body);
+
+    //     console.log("Respuesta de la API:", res);
+
+    //     if (res && res[0]) {
+    //       //  console.log(res[0]);
+    //       setData(res[0]);
+    //     } else {
+    //       console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error al obtener datos:", error);
+    //   }
+    // };
+
     const fetchDocumentosData = async () => {
+
+      //---------------------------------
+      // Obtén la cadena de consulta de la URL
+      const queryString = window.location.search;
+
+      // Parsea la cadena de consulta para obtener los parámetros
+      const urlParams = new URLSearchParams(queryString);
+
+      // Obtiene el valor del parámetro 'path'
+      const pathValue = urlParams.get('path');
+
+
+      //"Sgm_cUrlActual":"contabilidad\\manuales",
+      let _body = { Accion: "LISTAR", Sgm_cUrlActual: pathValue };
+
+      console.log("pathValue: ", pathValue);
       try {
+        const res = await eventoService.obtenerArchivosTabla(_body);
+
+        //console.log("Respuesta de la API:", res);
 
 
+        if (res && res[0]) {
+          console.log(res[0]);
 
+          _entro = true;
 
-
-        const res = await eventoService.obtenerFilesv2(category);
-
-        if (res && res.files && Array.isArray(res.files) && res.files.length > 0) {
-          setDocumentos(res.files);
+          setData(res[0]);
         } else {
-          console.warn('La propiedad files no es un array válido:', res.files);
-          setDocumentos([]);
+          console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
         }
       } catch (error) {
-        console.error('Error fetching documents:', error.message);
+        console.error("Error al obtener datos:", error);
       }
     };
 
-    if (category) {
-      fetchDocumentosData();
-    } else {
-      setDocumentos([]);
-    }
+
+    fetchDocumentosData();
+
   }, [props.pCategory]);
 
 
@@ -348,7 +389,8 @@ const LoadFiles = (props) => {
 
       for (const file of selectedFile) {
         // Verificar si ya existe un archivo con el mismo nombre
-        const existingFile = documentos.find((doc) => doc.fileName === file.name);
+        const existingFile = data.find((doc) => doc.fileName === file.name);
+
         if (existingFile) {
           successFlag = false;
           Swal.fire({
@@ -368,8 +410,10 @@ const LoadFiles = (props) => {
           break;
         }
 
+        //console.log(file.size);
         // Verificar si la extensión del archivo está en la lista de restricciones
         const fileExtension = file.name.slice(((file.name.lastIndexOf(".") - 1) >>> 0) + 2);
+        //console.log(fileExtension);
         if (restricciones.includes(`.${fileExtension}`)) {
           successFlag = false;
           Swal.fire({
@@ -388,13 +432,37 @@ const LoadFiles = (props) => {
         // const response = await eventoService.cargarArchivo(file, urlActual, file.name, nombreUsuario);
         const response = await eventoService.cargarArchivo(file, urlActual, file.name, nombreUsuario);
 
-        console.log(response);
+        //console.log(response);
         if (response && response.success) {
           successFlag = false;
           console.error(`Error al cargar el archivo ${file.name}:`, response.message || 'Error desconocido');
           break;
         }
+
+        // Llamar a la función actualizaarchivo con los datos necesarios
+        obtenerArchivosTabla(fileExtension, urlActual, selectedFile[0].name, nombreUsuario, file.size)
+
+
+          .then((res) => {
+            if (res) {
+              setData(res);
+              //console.log('Datos insertados correctamente:', res);
+            } else {
+              console.error('Error al insertar los datos');
+            }
+          })
+          .catch((error) => {
+            console.error('Error durante la inserción:', error);
+            // Manejar cualquier error que ocurra durante la inserción
+            setError(error.message || 'Error desconocido');
+          });
+        //  console.log(fileExtension);
+        //  console.log(urlActual);
+        //  console.log(selectedFile[0].name);
+        //  console.log(nombreUsuario);
+
       }
+
 
       if (successFlag) {
         Swal.fire({
@@ -402,32 +470,10 @@ const LoadFiles = (props) => {
           title: 'Todos los archivos cargados con éxito'
         }).then(() => {
 
-            // Llamar a la función actualizaarchivo con los datos necesarios
-            actualizaarchivo(urlActual, selectedFile[0].name, nombreUsuario)
-
-          
-
-            .then((res) => {
-              if (res) {
-                setData(res);
-                console.log('Datos insertados correctamente:', res);
-              } else {
-                console.error('Error al insertar los datos');
-              }
-            })
-            .catch((error) => {
-              console.error('Error durante la inserción:', error);
-              // Manejar cualquier error que ocurra durante la inserción
-              setError(error.message || 'Error desconocido');
-            });
-            
-            console.log(urlActual);
-            console.log(selectedFile[0].name);
-            console.log(nombreUsuario);
 
           setIsModalOpen(false);
-  
-        
+
+
           // window.location.reload(); // Recargar la página 
         });
       }
@@ -444,25 +490,35 @@ const LoadFiles = (props) => {
     handleDocumentClick(item.fileName);
   };
 
-  const filteredDocumentos = documentos.filter((documento) =>
-    documento.fileName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  if (data === null) {
+    return null; // o puedes hacer algo para manejar el caso en que data sea null
+  }
+
+
+  const filteredData = data.filter((documento) =>
+  documento && documento.Sgm_cFilename && documento.Sgm_cFilename.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentDocumentos = filteredDocumentos.slice(indexOfFirstItem, indexOfLastItem);
+  const currentDocumentos = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredDocumentos.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const renderFileTypeIcon = (fileName) => {
+    if (!fileName) {
+      return <IconForOtherFile />;
+    }
+
     const fileExtension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2).toLowerCase();
 
     switch (fileExtension) {
       case 'pdf':
         return <PdfIcon style={{ fontSize: 30, color: 'darkred' }} />;
       case 'docx':
-        // Agrega aquí el icono para archivos Word
-        return <IconForDocx />; // Reemplaza esto con tu propio icono o componente
+        return <IconForDocx />;
       case 'xlsx':
       case 'xls':
       case 'xlsm':
@@ -492,6 +548,7 @@ const LoadFiles = (props) => {
     }
   };
 
+
   const dropzoneStyle = {
     border: '2px dashed #cccccc',
     borderRadius: '4px',
@@ -499,6 +556,20 @@ const LoadFiles = (props) => {
     textAlign: 'center',
     cursor: 'pointer',
     marginTop: '20px',
+  };
+
+
+  const parseISODate = (isoDate) => {
+    const parts = isoDate.split(/[-T:.Z]/);
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5], 0));
+    return date;
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
   };
 
 
@@ -519,17 +590,6 @@ const LoadFiles = (props) => {
             variant="contained"
             onClick={() => {
               _accesoSubida = storage.GetStorage("Sgm_cAccesodeSubida");
-              // _validarUsuario = storage.GetStorage("Sgm_cUsuario");
-
-              // const accesoSubidaEncriptado = localStorage.getItem("Sgm_cAccesodeSubida");
-              // const usuarioEncriptado = localStorage.getItem("Sgm_cUsuario");
-
-              // // Ahora, accesoSubidaEncriptado y usuarioEncriptado contienen los valores encriptados
-              // console.log('Acceso de Subida encriptado: ', accesoSubidaEncriptado);
-              // console.log('Usuario encriptado: ', usuarioEncriptado);
-
-
-              // console.log('_accesoSubida : ', _accesoSubida);
               if (!_accesoSubida || _accesoSubida !== 'A') {
                 Swal.fire({
                   icon: 'warning',
@@ -681,7 +741,7 @@ const LoadFiles = (props) => {
                   align="center"
                   sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                 >
-                  Fecha de Modificación
+                  Fecha de Creación
                 </TableCell>
                 <TableCell
                   align="center"
@@ -704,14 +764,16 @@ const LoadFiles = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentDocumentos.map((item, idx) => (
+              {data?.map((item, idx) => (
                 <TableRow key={`${idx}_${indexOfFirstItem + idx}`}>
                   <TableCell align="center">
-                    {renderFileTypeIcon(item.fileName)}
+                    {renderFileTypeIcon(item.Sgm_cFilename)}
                   </TableCell>
-                  <TableCell align="left">{item.fileName}</TableCell>
-                  <TableCell align="center">{item.lastModified}</TableCell>
-                  <TableCell align="center">{item.fileSize}</TableCell>
+                  <TableCell align="left">{item.Sgm_cFilename}</TableCell>
+                  <TableCell align="center">
+                    {item.Sgm_cFechaMod ? parseISODate(item.Sgm_cFechaMod).toLocaleString() : 'Fecha inválida'}
+                  </TableCell>
+                  <TableCell align="center">{formatFileSize(item.Sgm_cTamanio)}</TableCell>
                   <TableCell align="center">{item.Sgm_cNombreUsuario}</TableCell>
                   <TableCell align="center">
                     <IconButton
@@ -726,6 +788,7 @@ const LoadFiles = (props) => {
                 </TableRow>
               ))}
             </TableBody>
+
           </Table>
         </TableContainer>
         {/* Agrega la paginación */}
@@ -749,7 +812,7 @@ const LoadFiles = (props) => {
             <NavigateBeforeIcon />
           </Button>
           <Button
-            disabled={indexOfLastItem >= filteredDocumentos.length}
+            disabled={indexOfLastItem >= filteredData.length}
             onClick={() => setCurrentPage(currentPage + 1)}
             sx={{
               marginRight: '5px',
