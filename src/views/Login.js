@@ -112,6 +112,8 @@ const Login = () => {
 				}
 			);
 
+
+
 			if (_result[0].Sgm_cUsuario === username) {
 
 				storage.SetStorage("IsLoged", "true");
