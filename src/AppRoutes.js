@@ -15,8 +15,10 @@ import CrearUsuario from './mantenimientos/Usuario/CrearUsuario';
 import ListarRestricciones from './mantenimientos/Restricciones/ListarRestricciones';
 import CrearRestricciones from './mantenimientos/Restricciones/CrearRestricciones';
 import EditarRestricciones from './mantenimientos/Restricciones/EditarRestricciones';
-import Cookies from 'universal-cookie';
-const cookies = new Cookies();
+
+import ListarArchivosUsua from './mantenimientos/ArchivosporUsuarios/ListarArchivos.js';
+
+
 import { storage } from "./storage.js";
 
 const AppRoutes = (props) => {
@@ -49,7 +51,7 @@ const AppRoutes = (props) => {
 
       {validaLogeo !== null && validaLogeo.trim() !== '' ? (
         <>
-        {/* ----------- USUARIOS */}
+          {/* ----------- USUARIOS */}
           <Route
             path="/crear"
             render={(route) => <CrearUsuario {...props} {...route} />}
@@ -63,7 +65,7 @@ const AppRoutes = (props) => {
             path="/editar"
             render={(route) => <EditaUsuario {...props} {...route} />}
           />
-        {/* ----------- RESTRICCION */}
+          {/* ----------- RESTRICCION */}
           <Route
             path="/crearRestric"
             render={(route) => <CrearRestricciones {...props} {...route} />}
@@ -76,6 +78,13 @@ const AppRoutes = (props) => {
             path="/editarRestric"
             render={(route) => <EditarRestricciones {...props} {...route} />}
           />
+
+          {/* ----------- ARCHIVOS POR USUARIOS */}
+          <Route
+            path="/MantArchivos"
+            render={(route) => <ListarArchivosUsua {...props} {...route} />}
+          />
+
         </>
       ) : (
         <Route

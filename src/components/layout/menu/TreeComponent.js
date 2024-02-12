@@ -39,9 +39,6 @@ const TreeComponent = () => {
         const _Perfil = storage.GetCookie("Sgm_cPerfil");
         const _Usuario = storage.GetStorage("Sgm_cUsuario", localStorage);
 
-        console.log(directorio);
- console.log(_Perfil);
-        console.log(_Usuario);
 
         //------------- filtra array x roles -----------------------
 
