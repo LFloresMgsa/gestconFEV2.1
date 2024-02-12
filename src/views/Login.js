@@ -121,10 +121,10 @@ const Login = () => {
 			if (_result[0].Sgm_cUsuario === username) {
 
 				storage.SetStorage("IsLoged", "true");
-				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
+				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario,localStorage);
 				storage.SetStorage("Sgm_cNombre", _result[0].Sgm_cNombre);
-				storage.SetStorage("Sgm_cAccesodeSubida", _result[0].Sgm_cAccesodeSubida);
-				storage.SetStorage("Sgm_cPerfil", _result[0].Sgm_cPerfil);
+				storage.SetCookie("Sgm_cPerfil", _result[0].Sgm_cPerfil);
+				storage.SetCookie("Sgm_cAccesodeSubida", _result[0].Sgm_cAccesodeSubida);
 				
 				setError('');
 

@@ -21,7 +21,7 @@ import { storage } from "./storage.js";
 
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
-  const _Usuario= storage.GetStorage("Sgm_cUsuario");
+  const _Usuario = storage.GetStorage("Sgm_cUsuario", localStorage);
   const [validaLogeo, setValidaLogeo] = useState(_Usuario || '')
 
 

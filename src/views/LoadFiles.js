@@ -583,7 +583,7 @@ const LoadFiles = (props) => {
           <Button
             variant="contained"
             onClick={() => {
-              _accesoSubida = storage.GetStorage("Sgm_cAccesodeSubida");
+              _accesoSubida = storage.GetCookie("Sgm_cAccesodeSubida");
               if (!_accesoSubida || _accesoSubida !== 'A') {
                 Swal.fire({
                   icon: 'warning',

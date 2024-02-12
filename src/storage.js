@@ -8,7 +8,10 @@ export const storage = {
   SetStorageObj,
   GetStorageObj,
   hideAccesoSubida,
-  isAccesoSubidaHidden
+  isAccesoSubidaHidden,
+  SetCookie,
+  GetCookie,
+  DelCookie
 };
 
 let variablesEncriptadas = {}; // Objeto para almacenar las variables encriptadas
@@ -21,7 +24,7 @@ function IniciaVariablesGlobales() {
 function generarClaveAleatoria(longitud) {
   const caracteres = 'あいうえおかきくけこさしすせそたちつてと' +
                      'なにぬねのはひふへほまみむめもやゆよら' +
-                     'りるれろわをん漢字汉字1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                     'りるれろわをん漢字汉字1234567890';
   let clave = '';
   for (let i = 0; i < longitud; i++) {
     const indice = Math.floor(Math.random() * caracteres.length);
@@ -30,13 +33,13 @@ function generarClaveAleatoria(longitud) {
   return clave;
 }
 
-const claveSecreta = generarClaveAleatoria(64); // Genera una clave de 64 caracteres
+const claveSecreta = generarClaveAleatoria(32); // Genera una clave de 64 caracteres
 
-function SetStorage(pVariable, pValue) {
+function SetStorage(pVariable, pValue, storageType = sessionStorage) {
   if (pValue !== undefined) {
     try {
       const encryptedValue = cifrarConClave(pValue);
-      sessionStorage.setItem(pVariable, encryptedValue);
+      storageType.setItem(pVariable, encryptedValue);
       // Almacenar la versión encriptada de la variable
       variablesEncriptadas[pVariable] = encryptedValue;
       return true;
@@ -50,9 +53,9 @@ function SetStorage(pVariable, pValue) {
   }
 }
 
-function GetStorage(pVariable) {
+function GetStorage(pVariable, storageType = sessionStorage) {
   try {
-    const encryptedValue = sessionStorage.getItem(pVariable) || "";
+    const encryptedValue = storageType.getItem(pVariable) || "";
     if (encryptedValue === "") {
       return "";
     }
@@ -92,11 +95,11 @@ function descifrarConClave(encryptedValue) {
   return decryptedValue;
 }
 
-function SetStorageObj(pVariable, pValue) {
+function SetStorageObj(pVariable, pValue, storageType = sessionStorage) {
   const obj = JSON.stringify(pValue);
   try {
     const encryptedValue = cifrarConClave(obj);
-    sessionStorage.setItem(pVariable, encryptedValue);
+    storageType.setItem(pVariable, encryptedValue);
     // Almacenar la versión encriptada del objeto
     variablesEncriptadas[pVariable] = encryptedValue;
     return true;
@@ -106,15 +109,15 @@ function SetStorageObj(pVariable, pValue) {
   }
 }
 
-function DelStorage(pVariable) {
-  sessionStorage.removeItem(pVariable);
+function DelStorage(pVariable, storageType = sessionStorage) {
+  storageType.removeItem(pVariable);
   // Eliminar la variable encriptada de la lista
   delete variablesEncriptadas[pVariable];
   return true;
 }
 
-function GetStorageObj(pVariable) {
-  const encryptedValue = sessionStorage.getItem(pVariable) || "";
+function GetStorageObj(pVariable, storageType = sessionStorage) {
+  const encryptedValue = storageType.getItem(pVariable) || "";
 
   if (encryptedValue === "") {
     return [];
@@ -139,4 +142,49 @@ function hideAccesoSubida() {
 
 function isAccesoSubidaHidden() {
   return storage.Sgm_cAccesodeSubidaHidden === true;
+}
+
+function SetCookie(name, value, days) {
+  if (value !== undefined) {
+    try {
+      const encryptedValue = cifrarConClave(value);
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (encryptedValue || "") + expires + "; path=/";
+      return true;
+    } catch (error) {
+      console.error('Error durante el cifrado:', error);
+      return false;
+    }
+  } else {
+    console.error('El valor es indefinido');
+    return false;
+  }
+}
+
+
+function GetCookie(name) {
+  const nameEQ = name + "=";
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1, cookie.length);
+    }
+    if (cookie.indexOf(nameEQ) === 0) {
+      const encryptedValue = cookie.substring(nameEQ.length, cookie.length);
+      return descifrarConClave(encryptedValue) || null;
+    }
+  }
+  return null;
+}
+
+
+
+function DelCookie(name) {
+  document.cookie = name + '=; Max-Age=-99999999;';
 }

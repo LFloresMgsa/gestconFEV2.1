@@ -26,13 +26,13 @@ const Logout = () => {
   const cerrarSesion = () => {
 
 
-    storage.DelStorage("IsLoged","");
-    storage.DelStorage("token","");
-    storage.DelStorage("Sgm_cNombre","");
-    storage.DelStorage("Sgm_cUsuario","");
-    storage.DelStorage("Sgm_cPerfil","");
-    storage.DelStorage("Sgm_cAccesodeSubida","");
-    storage.DelStorage("accesosSubida","");
+    storage.DelStorage("IsLoged",sessionStorage);
+    storage.DelStorage("token",sessionStorage);
+    storage.DelStorage("Sgm_cNombre",sessionStorage);
+    storage.DelStorage("Sgm_cUsuario", localStorage);
+    storage.DelCookie("Sgm_cPerfil", "");
+    storage.DelCookie("Sgm_cAccesodeSubida","");
+    storage.DelStorage("accesosSubida",localStorage);
 
 
     // Oculta la alerta después de cierto tiempo (opcional)

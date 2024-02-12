@@ -26,7 +26,7 @@ class Categorias extends Component {
 
     this.buscaValor(security).then(_valor => {
 
-      const _Usuario= storage.GetStorage("Sgm_cUsuario");
+      const _Usuario= storage.GetStorage("Sgm_cUsuario", localStorage);
 
       if (!_Usuario) {
 
