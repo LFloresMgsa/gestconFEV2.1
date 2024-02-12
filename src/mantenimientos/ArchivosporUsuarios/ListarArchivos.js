@@ -3,7 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { eventoService } from '../../services/evento.service';
 import md5 from 'md5'; // Importa la función md5 si aún no lo has hecho
 import { storage } from "../../storage.js";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Divider, TextField, InputAdornment, Button } from '@mui/material';
+import {
+    Paper, Table, TableBody, TableCell, TableContainer, TableHead,
+    TableRow, Box, Typography, Divider, TextField, InputAdornment,
+    Button, CircularProgress
+} from '@mui/material';
 import AppFooter from '../../components/layout/AppFooter.js';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, css } from '@mui/system';
@@ -16,7 +20,8 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Swal from 'sweetalert2';
 import { parseISO, format } from 'date-fns';
-const ListarRestricciones = (props) => {
+
+const listarArchivos = (props) => {
 
     const fondoStyle = {
         backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${fondo})`, // Opacidad agregada con rgba
@@ -25,13 +30,17 @@ const ListarRestricciones = (props) => {
         height: '100vh',
         // Otras propiedades de estilo según tus necesidades
     };
+
+
     const history = useHistory();
     const [data, setData] = useState([]);
     const [searchTermRestriccion, setSearchTermRestriccion] = useState('');
     const [searchTermTipo, setSearchTermTipo] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-
+    // Estado para almacenar la cantidad de archivos por usuario y por tipo
+    const [cantidadArchivosPorUsuario, setCantidadArchivosPorUsuario] = useState({});
+    const [cantidadArchivosPorTipo, setCantidadArchivosPorTipo] = useState({});
 
     // Cargar al inicio de la página
     useEffect(() => {
@@ -39,17 +48,14 @@ const ListarRestricciones = (props) => {
     }, []);
 
 
-
     const listar = async () => {
         let _body = { Accion: "BUSCARTODOS" };
         try {
             const res = await eventoService.obtenerArchivosTabla(_body);
-
-            //console.log("Respuesta de la API:", res);
-
             if (res && res[0]) {
-                console.log("Respuesta de la API:", res[0]); // Esto debería mostrar todos los objetos en la consola
-                setData(res[0]); // Esto establecerá los datos en el estado
+                setData(res[0]);
+                calcularCantidadArchivosPorUsuario(res[0]);
+                calcularCantidadArchivosPorTipo(res[0]);
             } else {
                 console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
             }
@@ -58,6 +64,29 @@ const ListarRestricciones = (props) => {
         }
     };
 
+    const calcularCantidadArchivosPorUsuario = (data) => {
+        const cantidadPorUsuario = {};
+        data.forEach(item => {
+            if (item.Sgm_cNombreUsuario in cantidadPorUsuario) {
+                cantidadPorUsuario[item.Sgm_cNombreUsuario]++;
+            } else {
+                cantidadPorUsuario[item.Sgm_cNombreUsuario] = 1;
+            }
+        });
+        setCantidadArchivosPorUsuario(cantidadPorUsuario);
+    };
+
+    const calcularCantidadArchivosPorTipo = (data) => {
+        const cantidadPorTipo = {};
+        data.forEach(item => {
+            if (item.Sgm_cTipo in cantidadPorTipo) {
+                cantidadPorTipo[item.Sgm_cTipo]++;
+            } else {
+                cantidadPorTipo[item.Sgm_cTipo] = 1;
+            }
+        });
+        setCantidadArchivosPorTipo(cantidadPorTipo);
+    };
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
@@ -143,6 +172,28 @@ const ListarRestricciones = (props) => {
         return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
     };
 
+    function CircularProgressWithLabel({ value, color, cantidad }) {
+        return (
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                <CircularProgress variant="determinate" value={value} sx={{ color }} />
+                <Box
+                    sx={{
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        position: 'absolute',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Typography variant="caption" component="div" color="textSecondary">{cantidad}</Typography>
+                </Box>
+            </Box>
+        );
+    }
+
     return (
         <div style={{ ...fondoStyle, marginTop: '35px' }}>
             <Paper
@@ -167,6 +218,47 @@ const ListarRestricciones = (props) => {
                     >
                         MANTENIMIENTO DE ARCHIVOS
                     </Typography>
+
+
+                    <div>
+                        <div style={{ display: 'flex', flexDirection: 'row'}}>
+                            <div>
+                                <Typography variant="h6" color="textPrimary" style={{fontWeight:'bold'}} gutterBottom>
+                                    Cantidad de archivos por usuario:
+                                </Typography>
+                                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                    {Object.entries(cantidadArchivosPorUsuario).map(([usuario, cantidad], index) => (
+                                        <div key={usuario} style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+                                            <Typography variant="body1" color="textPrimary" gutterBottom style={{ marginRight: '10px' }}>
+                                                {usuario}
+                                            </Typography>
+                                            <CircularProgressWithLabel value={(cantidad / data.length) * 100} color={index % 2 === 0 ? 'blue' : 'green'} cantidad={cantidad} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
+                            <div>
+                                <Typography variant="h6" color="textPrimary" style={{fontWeight:'bold'}} gutterBottom>
+                                    Cantidad de archivos por tipo:
+                                </Typography>
+                                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                    {Object.entries(cantidadArchivosPorTipo).map(([tipo, cantidad], index) => (
+                                        <div key={tipo} style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+                                            <Typography variant="body1" color="textPrimary" gutterBottom style={{ marginRight: '10px' }}>
+                                                {tipo}
+                                            </Typography>
+                                            <CircularProgressWithLabel value={(cantidad / data.length) * 100} color={index % 2 === 0 ? 'orange' : 'purple'} cantidad={cantidad} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                         <TextField
@@ -300,4 +392,4 @@ const ListarRestricciones = (props) => {
     );
 };
 
-export default ListarRestricciones;
+export default listarArchivos;
