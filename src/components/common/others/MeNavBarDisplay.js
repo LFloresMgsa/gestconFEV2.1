@@ -157,7 +157,7 @@ const MeNavBarDisplay = (props) => {
 
   }, [])
 
-  const nombre = storage.GetStorage('Sgm_cNombre');
+  const nombre = storage.GetStorage('_d2f5224b5d42178a7aa5b8ce4b4fd506');
   //console.log('nombre : ', nombre);
   //const nombre2 = storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
 

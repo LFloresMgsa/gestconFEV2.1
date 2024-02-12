@@ -121,10 +121,12 @@ const Login = () => {
 			if (_result[0].Sgm_cUsuario === username) {
 
 				storage.SetStorage("IsLoged", "true");
-				storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario,localStorage);
-				storage.SetStorage("Sgm_cNombre", _result[0].Sgm_cNombre);
-				storage.SetCookie("Sgm_cPerfil", _result[0].Sgm_cPerfil);
-				storage.SetCookie("Sgm_cAccesodeSubida", _result[0].Sgm_cAccesodeSubida);
+
+				storage.SetStorage("_u752826:bed2f264e06439f5015536dc9", _result[0].Sgm_cUsuario,localStorage);
+				
+				storage.SetStorage("_d2f5224b5d42178a7aa5b8ce4b4fd506", _result[0].Sgm_cNombre);
+				storage.SetCookie("_c9bf76eb:dfa1c821e8fd8ce55afe4838", _result[0].Sgm_cPerfil);
+				storage.SetCookie("_ba11280b55b16573d45d31d058c3", _result[0].Sgm_cAccesodeSubida);
 				
 				setError('');
 

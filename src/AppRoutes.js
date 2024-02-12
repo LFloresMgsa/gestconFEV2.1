@@ -23,10 +23,11 @@ import { storage } from "./storage.js";
 
 const AppRoutes = (props) => {
   const { accessToken, currentUser } = props;
-  const _Usuario = storage.GetStorage("Sgm_cUsuario", localStorage);
+  const _Usuario = storage.GetStorage("_u752826:bed2f264e06439f5015536dc9", localStorage);
   const [validaLogeo, setValidaLogeo] = useState(_Usuario || '')
 
-
+  // console.log(validaLogeo);
+  // console.log(_Usuario);
   return (
     <Switch>
       <Route exact path="/" render={(route) => <Dashboard {...props} {...route} />}>
@@ -51,6 +52,7 @@ const AppRoutes = (props) => {
 
       {validaLogeo !== null && validaLogeo.trim() !== '' ? (
         <>
+
           {/* ----------- USUARIOS */}
           <Route
             path="/crear"

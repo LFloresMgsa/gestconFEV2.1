@@ -17,7 +17,7 @@ import { storage } from "../../../storage.js";
 const TreeComponent = () => {
 
   const [_directorio, setDatos] = useState([]); // Estado para almacenar los datos, inicializado como null
-  const initialExpandedNodes = JSON.parse(localStorage.getItem('expandedNodes')) || [];
+  const initialExpandedNodes = JSON.parse(localStorage.getItem('_5747:b13f98e4c1dd46415ec64cb88c')) || [];
   const [expandedNodes, setExpandedNodes] = useState(initialExpandedNodes);
   const cookies = new Cookies();
   useEffect(() => {
@@ -36,8 +36,8 @@ const TreeComponent = () => {
     const BuscarDirectorios = async () => {
       try {
         const directorio = await eventoService.obtenerDirectorios();
-        const _Perfil = storage.GetCookie("Sgm_cPerfil");
-        const _Usuario = storage.GetStorage("Sgm_cUsuario", localStorage);
+        const _Perfil = storage.GetCookie("_c9bf76eb:dfa1c821e8fd8ce55afe4838");
+        const _Usuario = storage.GetStorage("_u752826:bed2f264e06439f5015536dc9", localStorage);
 
 
         //------------- filtra array x roles -----------------------
@@ -62,7 +62,8 @@ const TreeComponent = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('expandedNodes', JSON.stringify(expandedNodes));
+    //_5747b13f98e4c1dd46415ec64cb88c --- SE CAMBIO "EXPANDEDNODES"
+    localStorage.setItem('_5747:b13f98e4c1dd46415ec64cb88c', JSON.stringify(expandedNodes));
   }, [expandedNodes]);
 
   const MyTreeItem = ({ label, icon: Icon, fontSize, ...props }) => {

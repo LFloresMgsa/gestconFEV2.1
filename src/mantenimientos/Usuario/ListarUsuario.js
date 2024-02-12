@@ -187,12 +187,12 @@ const ListarUsuario = (props) => {
   };
 
   const [accesosSubida, setAccesosSubida] = useState(() => {
-    const storedState = localStorage.getItem('accesosSubida');
+    const storedState = localStorage.getItem('_a44c65f884de98f04934fd720535');
     return storedState ? JSON.parse(desencriptar(storedState)) : {};
   });
-  
+  //_a44c65f884de98f04934fd720535 -- ACCESO DE SUBIDA MANT USUARIO.
   useEffect(() => {
-    localStorage.setItem('accesosSubida', encriptar(JSON.stringify(accesosSubida)));
+    localStorage.setItem('_a44c65f884de98f04934fd720535', encriptar(JSON.stringify(accesosSubida)));
   }, [accesosSubida]);
   
 

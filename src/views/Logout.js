@@ -28,11 +28,11 @@ const Logout = () => {
 
     storage.DelStorage("IsLoged",sessionStorage);
     storage.DelStorage("token",sessionStorage);
-    storage.DelStorage("Sgm_cNombre",sessionStorage);
-    storage.DelStorage("Sgm_cUsuario", localStorage);
-    storage.DelCookie("Sgm_cPerfil", "");
-    storage.DelCookie("Sgm_cAccesodeSubida","");
-    storage.DelStorage("accesosSubida",localStorage);
+    storage.DelStorage("_d2f5224b5d42178a7aa5b8ce4b4fd506",sessionStorage); // NOMBRE
+    storage.DelStorage("_u752826:bed2f264e06439f5015536dc9", localStorage); // USUARIO
+    storage.DelCookie("_c9bf76eb:dfa1c821e8fd8ce55afe4838", ""); // PERFIL
+    storage.DelCookie("_ba11280b55b16573d45d31d058c3",""); // ACCESO DE SUBIDA
+    storage.DelStorage("_a44c65f884de98f04934fd720535",localStorage); // ACCES DE SUBIDA EN MANT DE USUARIO
 
 
     // Oculta la alerta después de cierto tiempo (opcional)

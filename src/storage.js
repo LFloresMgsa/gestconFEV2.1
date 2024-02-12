@@ -11,7 +11,8 @@ export const storage = {
   isAccesoSubidaHidden,
   SetCookie,
   GetCookie,
-  DelCookie
+  DelCookie,
+  cifrarConClave
 };
 
 let variablesEncriptadas = {}; // Objeto para almacenar las variables encriptadas
@@ -23,8 +24,10 @@ function IniciaVariablesGlobales() {
 
 function generarClaveAleatoria(longitud) {
   const caracteres = 'あいうえおかきくけこさしすせそたちつてと' +
-                     'なにぬねのはひふへほまみむめもやゆよら' +
-                     'りるれろわをん漢字汉字1234567890';
+    'なにぬねのはひふへほまみむめもやゆよら' +
+    'りるれろわをん漢字汉字1234567890' +
+    '!@#$%^&*()-_=+[{]}\\|;:\'",<.>/?' +
+    '🔒' 
   let clave = '';
   for (let i = 0; i < longitud; i++) {
     const indice = Math.floor(Math.random() * caracteres.length);
@@ -33,7 +36,7 @@ function generarClaveAleatoria(longitud) {
   return clave;
 }
 
-const claveSecreta = generarClaveAleatoria(32); // Genera una clave de 64 caracteres
+const claveSecreta = generarClaveAleatoria(45); // Genera una clave de 64 caracteres
 
 function SetStorage(pVariable, pValue, storageType = sessionStorage) {
   if (pValue !== undefined) {
