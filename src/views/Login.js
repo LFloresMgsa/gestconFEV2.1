@@ -77,7 +77,7 @@ const Login = () => {
 			console.log(tokenResponse);
 			// Utiliza la variable local en lugar del estado Token
 			if (tokenResponse) {
-				storage.SetStorage("token", tokenResponse.token);
+				storage.SetStorage("_t:00", tokenResponse.token);
 				//cookies.set('token', tokenResponse.token, { path: "/" });
 				setError('');
 			}
@@ -92,7 +92,7 @@ const Login = () => {
 		try {
 			// Genera un token
 			await BuscarToken();
-			const token = storage.GetStorage("token");
+			const token = storage.GetStorage("_t:00");
 			//console.log(token);
 			// Valida si encontró el token
 			if (!token) {

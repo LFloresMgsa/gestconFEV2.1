@@ -221,9 +221,9 @@ const listarArchivos = (props) => {
 
 
                     <div>
-                        <div style={{ display: 'flex', flexDirection: 'row'}}>
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
                             <div>
-                                <Typography variant="h6" color="textPrimary" style={{fontWeight:'bold'}} gutterBottom>
+                                <Typography variant="h6" color="textPrimary" style={{ fontWeight: 'bold' }} gutterBottom>
                                     Cantidad de archivos por usuario:
                                 </Typography>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -241,7 +241,7 @@ const listarArchivos = (props) => {
 
                         <div style={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
                             <div>
-                                <Typography variant="h6" color="textPrimary" style={{fontWeight:'bold'}} gutterBottom>
+                                <Typography variant="h6" color="textPrimary" style={{ fontWeight: 'bold' }} gutterBottom>
                                     Cantidad de archivos por tipo:
                                 </Typography>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -306,34 +306,41 @@ const listarArchivos = (props) => {
                                     <TableCell align="left"
                                         sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                                     >UrlActual</TableCell>
+
                                     <TableCell align="left"
                                         sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                                     >Nombre del Archivo</TableCell>
-                                    <TableCell align="left"
-                                        sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
-                                    >Usuario</TableCell>
-                                    <TableCell align="left"
-                                        sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
-                                    >Fecha de Creaciòn</TableCell>
                                     <TableCell align="center"
                                         sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                                     >Tamaño</TableCell>
                                     <TableCell align="left"
                                         sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
                                     >Tipo</TableCell>
+
+                                    <TableCell align="left"
+                                        sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                                    >Fecha de Creaciòn</TableCell>
+
+                                    <TableCell align="left"
+                                        sx={{ backgroundColor: 'darkred', color: 'white', fontWeight: 'bold' }}
+                                    >Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index}>
+
                                         <TableCell align="left">{item.Sgm_cUrlActual}</TableCell>
+
                                         <TableCell align="left">{item.Sgm_cFilename}</TableCell>
-                                        <TableCell align="left">{item.Sgm_cNombreUsuario}</TableCell>
+                                        <TableCell align="center">{formatFileSize(item.Sgm_cTamanio)}</TableCell>
+                                        <TableCell align="left">{item.Sgm_cTipo}</TableCell>
+
                                         <TableCell align="center">
                                             {item.Sgm_cFechaMod ? formatDateTime(item.Sgm_cFechaMod) : 'Fecha inválida'}
                                         </TableCell>
-                                        <TableCell align="center">{formatFileSize(item.Sgm_cTamanio)}</TableCell>
-                                        <TableCell align="left">{item.Sgm_cTipo}</TableCell>
+
+                                        <TableCell align="left">{item.Sgm_cNombreUsuario}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
