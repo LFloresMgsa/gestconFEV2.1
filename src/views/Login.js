@@ -71,9 +71,10 @@ const Login = () => {
 		try {
 			let _body = { Sgm_cUsuario: username, Sgm_cContrasena: md5(password) };
 
+			console.log(_body);
 			// obtenemos el token
 			const tokenResponse = await eventoService.obtenerToken(_body);
-
+			console.log(tokenResponse);
 			// Utiliza la variable local en lugar del estado Token
 			if (tokenResponse) {
 				storage.SetStorage("token", tokenResponse.token);
@@ -92,6 +93,7 @@ const Login = () => {
 			// Genera un token
 			await BuscarToken();
 			const token = storage.GetStorage("token");
+			//console.log(token);
 			// Valida si encontró el token
 			if (!token) {
 				throw "Error: Token no existe";
@@ -105,6 +107,8 @@ const Login = () => {
 				(res) => {
 					setLogeo(res[0]);
 					_result = res[0];
+					
+			//console.log(_result);
 				},
 				(error) => {
 					console.log(error);

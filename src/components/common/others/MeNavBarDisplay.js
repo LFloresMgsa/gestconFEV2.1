@@ -153,11 +153,12 @@ const MeNavBarDisplay = (props) => {
     const _IsLoged= storage.GetStorage("IsLoged");
     setIsLoged(_IsLoged);
 
-// console.log('_IsLoged : ', _IsLoged);
+//console.log('_IsLoged : ', _IsLoged);
 
   }, [])
 
   const nombre = storage.GetStorage('Sgm_cNombre');
+  //console.log('nombre : ', nombre);
   //const nombre2 = storage.SetStorage("Sgm_cUsuario", _result[0].Sgm_cUsuario);
 
   return (

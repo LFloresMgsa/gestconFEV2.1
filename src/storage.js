@@ -11,6 +11,8 @@ export const storage = {
   isAccesoSubidaHidden
 };
 
+let variablesEncriptadas = {}; // Objeto para almacenar las variables encriptadas
+
 function IniciaVariablesGlobales() {
   // Código de inicialización si es necesario
   return true;
@@ -35,6 +37,8 @@ function SetStorage(pVariable, pValue) {
     try {
       const encryptedValue = cifrarConClave(pValue);
       sessionStorage.setItem(pVariable, encryptedValue);
+      // Almacenar la versión encriptada de la variable
+      variablesEncriptadas[pVariable] = encryptedValue;
       return true;
     } catch (error) {
       console.error('Error durante el cifrado:', error);
@@ -51,6 +55,10 @@ function GetStorage(pVariable) {
     const encryptedValue = sessionStorage.getItem(pVariable) || "";
     if (encryptedValue === "") {
       return "";
+    }
+    // Si la variable está en la lista de variables encriptadas, retornar su valor desencriptado
+    if (variablesEncriptadas.hasOwnProperty(pVariable)) {
+      return descifrarConClave(variablesEncriptadas[pVariable]);
     }
     const decryptedValue = descifrarConClave(encryptedValue);
     return decryptedValue || "";
@@ -89,6 +97,8 @@ function SetStorageObj(pVariable, pValue) {
   try {
     const encryptedValue = cifrarConClave(obj);
     sessionStorage.setItem(pVariable, encryptedValue);
+    // Almacenar la versión encriptada del objeto
+    variablesEncriptadas[pVariable] = encryptedValue;
     return true;
   } catch (error) {
     console.error('Error durante el cifrado:', error);
@@ -98,6 +108,8 @@ function SetStorageObj(pVariable, pValue) {
 
 function DelStorage(pVariable) {
   sessionStorage.removeItem(pVariable);
+  // Eliminar la variable encriptada de la lista
+  delete variablesEncriptadas[pVariable];
   return true;
 }
 
@@ -109,10 +121,14 @@ function GetStorageObj(pVariable) {
   }
 
   try {
+    // Si la variable está en la lista de variables encriptadas, retornar su valor desencriptado
+    if (variablesEncriptadas.hasOwnProperty(pVariable)) {
+      return JSON.parse(descifrarConClave(variablesEncriptadas[pVariable]));
+    }
     const decryptedValue = descifrarConClave(encryptedValue);
     return JSON.parse(decryptedValue) || [];
   } catch (error) {
-    console.error('Error durante el descifrado:', error);
+    console.error('Error during decryption:', error);
     return [];
   }
 }
