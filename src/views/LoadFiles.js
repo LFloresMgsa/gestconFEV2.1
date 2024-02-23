@@ -143,7 +143,7 @@ const LoadFiles = (props) => {
       //console.log(response);
       // Manejar la respuesta adecuadamente
       if (response && !response.error) {
-        //      console.log('Datos insertados correctamente:', response);
+       console.log('Datos insertados correctamente:', response);
         return response; // Devolver los datos insertados
       } else {
         console.error('Error al insertar los datos:', response.error);
@@ -233,23 +233,6 @@ const LoadFiles = (props) => {
       return ultimoDirectorio;
     }
 
-    // const listarArchivos = async () => {
-    //   let _body = { Accion: "LISTAR" };
-    //   try {
-    //     const res = await eventoService.obtenerArchivosTabla(_body);
-
-    //     console.log("Respuesta de la API:", res);
-
-    //     if (res && res[0]) {
-    //       //  console.log(res[0]);
-    //       setData(res[0]);
-    //     } else {
-    //       console.error("Error: No se obtuvieron datos o los datos están en un formato incorrecto.");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error al obtener datos:", error);
-    //   }
-    // };
 
 
 
@@ -361,7 +344,7 @@ const LoadFiles = (props) => {
   };
 
 
-  const nombreUsuario = storage.GetStorage('Sgm_cNombre');
+  const nombreUsuario = storage.GetStorage('_d2f5224b5d42178a7aa5b8ce4b4fd506',sessionStorage);
 
   const handleFileUpload = async () => {
     try {
@@ -377,6 +360,9 @@ const LoadFiles = (props) => {
         return;
       }
 
+      //console.log(selectedFile);
+
+
       const restricciones = await listarRestricciones();
       const tamanioPermitido = await listaTamanio();
 
@@ -391,6 +377,7 @@ const LoadFiles = (props) => {
         // Verificar si ya existe un archivo con el mismo nombre
         const existingFile = data.find((doc) => doc.fileName === file.name);
 
+        //console.log(file);
         if (existingFile) {
           successFlag = false;
           Swal.fire({
@@ -440,7 +427,7 @@ const LoadFiles = (props) => {
         }
 
         // Llamar a la función actualizaarchivo con los datos necesarios
-        obtenerArchivosTabla(fileExtension, urlActual, selectedFile[0].name, nombreUsuario, file.size)
+        obtenerArchivosTabla(fileExtension, urlActual, file.name, nombreUsuario, file.size)
 
 
           .then((res) => {
@@ -456,12 +443,12 @@ const LoadFiles = (props) => {
             // Manejar cualquier error que ocurra durante la inserción
             setError(error.message || 'Error desconocido');
           });
-        //  console.log(fileExtension);
-        //  console.log(urlActual);
-        //  console.log(selectedFile[0].name);
-        //  console.log(nombreUsuario);
-
+        // console.log(fileExtension);
+        // console.log(urlActual);
+        // console.log(file.name);
+        // console.log(nombreUsuario);
       }
+
 
 
       if (successFlag) {
